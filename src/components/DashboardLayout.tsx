@@ -65,6 +65,23 @@ const DashboardLayout = () => {
       icon: <HistoryOutlined />,
       label: 'Transaction History',
     },
+    {
+      key: 'role-management',
+      label: 'Role Management',
+      icon: <SettingOutlined />,
+      children: [
+        {
+          key: '/super-admin',
+          icon: <UserOutlined />,
+          label: 'SuperAdmin Panel',
+        },
+        {
+          key: '/admin-management',
+          icon: <TeamOutlined />,
+          label: 'Admin Panel',
+        },
+      ],
+    },
   ];
 
   const profileMenu = (

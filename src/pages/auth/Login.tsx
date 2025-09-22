@@ -15,12 +15,16 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary-light to-accent-light flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-lg">
-        <div className="text-center mb-8">
-          <Title level={2} className="text-primary mb-2">Welcome Back</Title>
-          <Text type="secondary">Sign in to your healthcare analytics dashboard</Text>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-primary/10 to-accent/10 flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        <Card className="shadow-2xl border-0 bg-card/95 backdrop-blur-sm">
+          <div className="text-center mb-8">
+            <div className="w-16 h-16 bg-gradient-to-r from-primary to-accent rounded-full flex items-center justify-center mx-auto mb-4">
+              <UserOutlined className="text-white text-2xl" />
+            </div>
+            <Title level={2} className="text-foreground mb-2">Welcome Back</Title>
+            <Text type="secondary">Sign in to your healthcare analytics dashboard</Text>
+          </div>
 
         <Form
           form={form}
@@ -81,8 +85,9 @@ const Login = () => {
               Sign up here
             </Link>
           </div>
-        </div>
-      </Card>
+          </div>
+        </Card>
+      </div>
     </div>
   );
 };

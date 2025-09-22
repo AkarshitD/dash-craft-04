@@ -19,6 +19,8 @@ import UploadFiles from "./pages/dashboard/UploadFiles";
 import TransactionHistory from "./pages/dashboard/TransactionHistory";
 import Profile from "./pages/dashboard/Profile";
 import NotFound from "./pages/NotFound";
+import SuperAdminDashboard from "./pages/role-management/SuperAdminDashboard";
+import AdminDashboard from "./pages/role-management/AdminDashboard";
 
 const queryClient = new QueryClient();
 
@@ -60,6 +62,10 @@ const App = () => (
               <Route path="upload-files" element={<UploadFiles />} />
               <Route path="transaction-history" element={<TransactionHistory />} />
               <Route path="profile" element={<Profile />} />
+              
+              {/* Role Management routes */}
+              <Route path="super-admin" element={<SuperAdminDashboard />} />
+              <Route path="admin-management" element={<AdminDashboard />} />
             </Route>
             
             {/* Catch-all route */}
