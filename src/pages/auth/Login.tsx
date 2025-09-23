@@ -51,7 +51,7 @@ const Login = () => {
       message.success(`Welcome ${user.name}!`);
       setTimeout(() => {
         setLoading(false);
-        navigate('/dashboard');
+        navigate('/');
       }, 1000);
     } else {
       setLoading(false);
