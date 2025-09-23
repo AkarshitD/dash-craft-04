@@ -137,7 +137,7 @@ const ProviderSummary = () => {
       {/* Summary Cards */}
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
             <Statistic
               title="Total Providers"
               value={42}
@@ -147,7 +147,7 @@ const ProviderSummary = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-success/5 to-success/10 border border-success/20">
             <Statistic
               title="Active Providers"
               value={38}
@@ -157,7 +157,7 @@ const ProviderSummary = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
             <Statistic
               title="Total Patients"
               value={1245}
@@ -167,7 +167,7 @@ const ProviderSummary = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-warning/5 to-warning/10 border border-warning/20">
             <Statistic
               title="Total Revenue"
               value={455000}
@@ -180,7 +180,7 @@ const ProviderSummary = () => {
       </Row>
 
       {/* Charts */}
-      <Row gutter={[16, 16]}>
+      {/* <Row gutter={[16, 16]}>
         <Col xs={24} lg={24}>
           <Card title="Provider Revenue Performance">
             <Column
@@ -197,7 +197,7 @@ const ProviderSummary = () => {
             />
           </Card>
         </Col>
-      </Row>
+      </Row> */}
 
       {/* Filters */}
       <Card>

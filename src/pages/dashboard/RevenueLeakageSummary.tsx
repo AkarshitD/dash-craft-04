@@ -143,7 +143,7 @@ const RevenueLeakageSummary = () => {
       />
 
       {/* Summary Cards */}
-      <Row gutter={[16, 16]}>
+      {/* <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={6}>
           <Card>
             <Statistic
@@ -187,10 +187,10 @@ const RevenueLeakageSummary = () => {
             />
           </Card>
         </Col>
-      </Row>
+      </Row> */}
 
       {/* Progress Indicators */}
-      <Row gutter={[16, 16]}>
+      {/* <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
           <Card title="Recovery Progress by Category">
             <div className="space-y-4">
@@ -240,10 +240,10 @@ const RevenueLeakageSummary = () => {
             />
           </Card>
         </Col>
-      </Row>
+      </Row> */}
 
       {/* Monthly Trend */}
-      <Row>
+      {/* <Row>
         <Col span={24}>
           <Card title="Monthly Revenue Leakage Trend">
             <Column
@@ -260,7 +260,7 @@ const RevenueLeakageSummary = () => {
             />
           </Card>
         </Col>
-      </Row>
+      </Row> */}
 
       {/* Leakage Details Table */}
       <Card title="Revenue Leakage Analysis">

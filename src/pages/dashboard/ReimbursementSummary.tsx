@@ -152,7 +152,7 @@ const ReimbursementSummary = () => {
       {/* Summary Cards */}
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
             <Statistic
               title="Total Claims"
               value={1247}
@@ -162,7 +162,7 @@ const ReimbursementSummary = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-success/5 to-success/10 border border-success/20">
             <Statistic
               title="Total Reimbursed"
               value={2890000}
@@ -173,7 +173,7 @@ const ReimbursementSummary = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
             <Statistic
               title="Avg Processing Time"
               value={16.8}
@@ -184,7 +184,7 @@ const ReimbursementSummary = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-warning/5 to-warning/10 border border-warning/20">
             <Statistic
               title="Reimbursement Rate"
               value={89.2}
@@ -197,7 +197,7 @@ const ReimbursementSummary = () => {
       </Row>
 
       {/* Charts */}
-      <Row gutter={[16, 16]}>
+      {/* <Row gutter={[16, 16]}>
         <Col xs={24} lg={16}>
           <Card title="Monthly Reimbursement Trend">
             <Area
@@ -228,7 +228,7 @@ const ReimbursementSummary = () => {
             </div>
           </Card>
         </Col>
-      </Row>
+      </Row> */}
 
       {/* Filters and Table */}
       <Card>

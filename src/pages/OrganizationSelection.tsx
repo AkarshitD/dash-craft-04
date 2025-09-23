@@ -45,15 +45,16 @@ const OrganizationSelection = () => {
             <Select
               size="large"
               placeholder="Search and select your organization"
-              className="w-full"
+              className="w-full h-32"
               showSearch
               value={selectedOrg}
               onChange={setSelectedOrg}
               filterOption={(input, option) =>
                 (option?.children as unknown as string)
                   ?.toLowerCase()
-                  ?.includes(input.toLowerCase())
+                  ?.includes(input.toLowerCase())  
               }
+               style={{ height: 80 }}
             >
               {organizations.map((org) => (
                 <Option key={org.id} value={org.id}>

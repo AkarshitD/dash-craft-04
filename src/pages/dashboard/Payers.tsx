@@ -157,7 +157,7 @@ const Payers = () => {
       {/* Summary Cards */}
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
             <Statistic
               title="Total Payers"
               value={24}
@@ -167,7 +167,7 @@ const Payers = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-success/5 to-success/10 border border-success/20">
             <Statistic
               title="Active Payers"
               value={22}
@@ -177,7 +177,7 @@ const Payers = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
             <Statistic
               title="Avg Reimbursement Rate"
               value={89.2}
@@ -188,7 +188,7 @@ const Payers = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-warning/5 to-warning/10 border border-warning/20">
             <Statistic
               title="Avg Processing Time"
               value={17.5}
@@ -199,11 +199,23 @@ const Payers = () => {
           </Card>
         </Col>
       </Row>
-
-      <Tabs defaultActiveKey="overview">
-        <TabPane tab="Overview" key="overview">
+   <Card title="Payer Details">
+            <Table
+              columns={columns}
+              dataSource={payerData}
+              pagination={{
+                pageSize: 10,
+                showSizeChanger: true,
+                showQuickJumper: true,
+                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} payers`,
+              }}
+              scroll={{ x: 1200 }}
+            />
+          </Card>
+      {/* <Tabs defaultActiveKey="overview">
+        <TabPane tab="Overview" key="overview"> */}
           {/* Performance Charts */}
-          <Row gutter={[16, 16]} className="mb-6">
+          {/* <Row gutter={[16, 16]} className="mb-6">
             <Col xs={24} lg={12}>
               <Card title="Processing Time by Payer">
                 <Column
@@ -243,24 +255,12 @@ const Payers = () => {
                 </div>
               </Card>
             </Col>
-          </Row>
+          </Row> */}
 
           {/* Payer Table */}
-          <Card title="Payer Details">
-            <Table
-              columns={columns}
-              dataSource={payerData}
-              pagination={{
-                pageSize: 10,
-                showSizeChanger: true,
-                showQuickJumper: true,
-                showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} payers`,
-              }}
-              scroll={{ x: 1200 }}
-            />
-          </Card>
-        </TabPane>
-
+       
+        {/* </TabPane> */}
+{/* 
         <TabPane tab="Performance Trends" key="trends">
           <Card title="Monthly Reimbursement Rate Trends">
             <Line
@@ -278,9 +278,9 @@ const Payers = () => {
               point={{ size: 4 }}
             />
           </Card>
-        </TabPane>
+        </TabPane> */}
 
-        <TabPane tab="Analytics" key="analytics">
+        {/* <TabPane tab="Analytics" key="analytics">
           <Row gutter={[16, 16]}>
             <Col xs={24} lg={12}>
               <Card title="Claim Volume by Payer">
@@ -310,8 +310,8 @@ const Payers = () => {
               </Card>
             </Col>
           </Row>
-        </TabPane>
-      </Tabs>
+        </TabPane> */}
+      {/* </Tabs> */}
     </div>
   );
 };

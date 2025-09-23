@@ -205,7 +205,7 @@ const Records = () => {
       {/* Summary Cards */}
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
             <Statistic
               title="Total Records"
               value={12547}
@@ -215,7 +215,7 @@ const Records = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-success/5 to-success/10 border border-success/20">
             <Statistic
               title="Active Patients"
               value={2834}
@@ -225,7 +225,7 @@ const Records = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
             <Statistic
               title="Records This Month"
               value={456}
@@ -235,7 +235,7 @@ const Records = () => {
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={6}>
-          <Card>
+          <Card className="text-center bg-gradient-to-br from-warning/5 to-warning/10 border border-warning/20">
             <Statistic
               title="Pending Review"
               value={23}

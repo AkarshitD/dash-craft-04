@@ -105,7 +105,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="w-full mx-auto">
       <Tabs defaultActiveKey="profile">
         <TabPane tab="Profile Information" key="profile">
           <Row gutter={[24, 24]}>
