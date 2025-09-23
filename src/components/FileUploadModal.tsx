@@ -1,5 +1,5 @@
-import { Modal, Form, Select, Button, Typography, Row, Col } from 'antd';
-import { BankOutlined, FileTextOutlined, UploadOutlined } from '@ant-design/icons';
+import { Modal, Form, Select, Button, Typography, Row, Col, Upload, message } from 'antd';
+import { BankOutlined, FileTextOutlined, UploadOutlined, InboxOutlined } from '@ant-design/icons';
 import { useRole } from '@/contexts/RoleContext';
 
 const { Title, Text } = Typography;
@@ -29,9 +29,28 @@ const FileUploadModal = ({ visible, onClose, onSubmit }: FileUploadModalProps) =
   ];
 
   const handleSubmit = (values: any) => {
+    if (!values.files || values.files.length === 0) {
+      message.error('Please select at least one file to upload');
+      return;
+    }
+    
+    message.success('Files uploaded successfully!');
     onSubmit(values);
     form.resetFields();
     onClose();
+  };
+
+  const uploadProps = {
+    name: 'file',
+    multiple: true,
+    beforeUpload: () => false, // Prevent auto upload
+    onChange: (info: any) => {
+      const fileList = info.fileList.map((file: any) => ({
+        ...file,
+        status: 'done',
+      }));
+      form.setFieldsValue({ files: fileList });
+    },
   };
 
   return (
@@ -74,6 +93,10 @@ const FileUploadModal = ({ visible, onClose, onSubmit }: FileUploadModalProps) =
                   placeholder="Select organization"
                   size="large"
                   suffixIcon={<BankOutlined />}
+                  showSearch
+                  filterOption={(input, option) =>
+                    option?.children?.toString().toLowerCase().includes(input.toLowerCase())
+                  }
                 >
                   {organizations.map(org => (
                     <Option key={org} value={org}>{org}</Option>
@@ -92,6 +115,10 @@ const FileUploadModal = ({ visible, onClose, onSubmit }: FileUploadModalProps) =
                   placeholder="Select file type"
                   size="large"
                   suffixIcon={<FileTextOutlined />}
+                  showSearch
+                  filterOption={(input, option) =>
+                    option?.children?.toString().toLowerCase().includes(input.toLowerCase())
+                  }
                 >
                   {fileTypes.map(type => (
                     <Option key={type.value} value={type.value}>
@@ -102,6 +129,26 @@ const FileUploadModal = ({ visible, onClose, onSubmit }: FileUploadModalProps) =
               </Form.Item>
             </Col>
           </Row>
+
+          <Form.Item
+            name="files"
+            label="Select Files"
+            rules={[{ required: true, message: 'Please select files to upload!' }]}
+            className="mt-4"
+          >
+            <Upload.Dragger {...uploadProps}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined className="text-4xl text-primary" />
+              </p>
+              <p className="ant-upload-text">
+                Click or drag files to this area to upload
+              </p>
+              <p className="ant-upload-hint">
+                Support for 835 (Remittance) and 837 (Claims) file formats. 
+                Maximum file size: 50MB per file.
+              </p>
+            </Upload.Dragger>
+          </Form.Item>
 
           <div className="mt-4">
             <Title level={5} className="mb-3">File Type Descriptions</Title>

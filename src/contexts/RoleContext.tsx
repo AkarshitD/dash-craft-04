@@ -34,15 +34,36 @@ interface RoleProviderProps {
 }
 
 export const RoleProvider = ({ children }: RoleProviderProps) => {
-  // Default user for demo - in real app this would come from auth
-  const [currentUser, setCurrentUser] = useState<User>({
-    id: 'user-1',
-    name: 'Dr. Sarah Johnson',
-    email: 'sarah.johnson@healthcare.com',
-    role: 'Admin', // Change this to test different roles: 'SuperAdmin', 'Admin', 'User'
-    organization: 'Health Corp',
-    hasUploadAccess: true,
-  });
+  // Mock users for testing
+  const mockUsers = [
+    {
+      id: 'super-1',
+      name: 'Super Administrator',
+      email: 'superadmin@test.com',
+      role: 'SuperAdmin' as UserRole,
+      organization: 'System Administration',
+      hasUploadAccess: true,
+    },
+    {
+      id: 'admin-1', 
+      name: 'Healthcare Admin',
+      email: 'admin@test.com',
+      role: 'Admin' as UserRole,
+      organization: 'Health Corp',
+      hasUploadAccess: true,
+    },
+    {
+      id: 'user-1',
+      name: 'Dr. Sarah Johnson',
+      email: 'user@test.com', 
+      role: 'User' as UserRole,
+      organization: 'Health Corp',
+      hasUploadAccess: true,
+    },
+  ];
+
+  // Default to Admin user for demo - change email to test different roles
+  const [currentUser, setCurrentUser] = useState<User>(mockUsers[1]); // Change index: 0=SuperAdmin, 1=Admin, 2=User
 
   const hasUploadPermission = () => {
     if (currentUser.role === 'SuperAdmin' || currentUser.role === 'Admin') {

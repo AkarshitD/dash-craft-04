@@ -1,17 +1,62 @@
-import { Card, Form, Input, Button, Typography, Divider } from 'antd';
+import { Card, Form, Input, Button, Typography, Divider, message, Alert } from 'antd';
 import { UserOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useRole } from '@/contexts/RoleContext';
 
 const { Title, Text } = Typography;
 
 const Login = () => {
   const navigate = useNavigate();
+  const { setCurrentUser } = useRole();
   const [form] = Form.useForm();
+  const [loading, setLoading] = useState(false);
 
-  const onFinish = (values: any) => {
-    console.log('Login attempt:', values);
-    // Simulate successful login
-    navigate('/organization-selection');
+  // Mock users for testing
+  const mockUsers = [
+    {
+      id: 'super-1',
+      name: 'Super Administrator',
+      email: 'superadmin@test.com',
+      role: 'SuperAdmin' as const,
+      organization: 'System Administration',
+      hasUploadAccess: true,
+    },
+    {
+      id: 'admin-1', 
+      name: 'Healthcare Admin',
+      email: 'admin@test.com',
+      role: 'Admin' as const,
+      organization: 'Health Corp',
+      hasUploadAccess: true,
+    },
+    {
+      id: 'user-1',
+      name: 'Dr. Sarah Johnson',
+      email: 'user@test.com', 
+      role: 'User' as const,
+      organization: 'Health Corp',
+      hasUploadAccess: true,
+    },
+  ];
+
+  const onFinish = (values: { email: string; password: string }) => {
+    setLoading(true);
+    
+    // Find user by email
+    const user = mockUsers.find(u => u.email === values.email);
+    
+    if (user && values.password === 'password123') {
+      setCurrentUser(user);
+      message.success(`Welcome ${user.name}!`);
+      setTimeout(() => {
+        setLoading(false);
+        navigate('/dashboard');
+      }, 1000);
+    } else {
+      setLoading(false);
+      message.error('Invalid email or password');
+    }
   };
 
   return (
@@ -25,6 +70,19 @@ const Login = () => {
             <Title level={2} className="text-foreground mb-2">Welcome Back</Title>
             <Text type="secondary">Sign in to your healthcare analytics dashboard</Text>
           </div>
+
+          <Alert
+            message="Demo Credentials"
+            description={
+              <div className="text-sm">
+                <div><strong>SuperAdmin:</strong> superadmin@test.com / password123</div>
+                <div><strong>Admin:</strong> admin@test.com / password123</div>
+                <div><strong>User:</strong> user@test.com / password123</div>
+              </div>
+            }
+            type="info"
+            className="mb-6"
+          />
 
         <Form
           form={form}
@@ -65,6 +123,7 @@ const Login = () => {
               htmlType="submit" 
               className="w-full bg-primary hover:bg-primary-dark"
               size="large"
+              loading={loading}
             >
               Sign In
             </Button>
