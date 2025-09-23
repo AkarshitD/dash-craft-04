@@ -1,13 +1,17 @@
-import { Card, Upload, Button, Table, Row, Col, Progress, Alert, Tabs } from 'antd';
+import { Card, Upload, Button, Table, Row, Col, Progress, Alert, Tabs, Tag } from 'antd';
 import { 
   UploadOutlined, 
   FileOutlined, 
   CheckCircleOutlined,
   SyncOutlined,
   ExclamationCircleOutlined,
-  CloudUploadOutlined 
+  CloudUploadOutlined,
+  ReloadOutlined,
+  WarningOutlined
 } from '@ant-design/icons';
 import { useState } from 'react';
+import FileUploadModal from '@/components/FileUploadModal';
+import { useRole } from '@/contexts/RoleContext';
 
 const { Dragger } = Upload;
 const { TabPane } = Tabs;
@@ -15,37 +19,46 @@ const { TabPane } = Tabs;
 const UploadFiles = () => {
   const [uploadProgress, setUploadProgress] = useState(0);
   const [isUploading, setIsUploading] = useState(false);
+  const [isUploadModalVisible, setIsUploadModalVisible] = useState(false);
+  const [uploadConfig, setUploadConfig] = useState<any>(null);
+  const { currentUser, hasUploadPermission } = useRole();
 
   const uploadedFiles = [
     {
       key: '1',
       fileName: 'patient_records_jan_2024.csv',
-      fileType: 'CSV',
+      fileType: '835',
+      organization: 'Health Corp',
       uploadDate: '2024-01-20',
       status: 'Processed',
       recordsCount: 1245,
       fileSize: '2.4 MB',
       mapping: 'Complete',
+      hasMissingData: false,
     },
     {
       key: '2',
       fileName: 'claims_data_q4_2023.xlsx',
-      fileType: 'Excel',
+      fileType: '837',
+      organization: 'MedCenter',
       uploadDate: '2024-01-18',
       status: 'Processing',
       recordsCount: 856,
       fileSize: '4.1 MB',
       mapping: 'In Progress',
+      hasMissingData: true,
     },
     {
       key: '3',
       fileName: 'provider_information.json',
-      fileType: 'JSON',
+      fileType: '835',
+      organization: 'Regional Hospital',
       uploadDate: '2024-01-15',
       status: 'Failed',
       recordsCount: 0,
       fileSize: '1.2 MB',
       mapping: 'Error',
+      hasMissingData: false,
     },
   ];
 
@@ -97,9 +110,19 @@ const UploadFiles = () => {
       ),
     },
     {
-      title: 'Type',
+      title: 'File Type',
       dataIndex: 'fileType',
       key: 'fileType',
+      render: (type: string) => (
+        <Tag color={type === '835' ? 'blue' : 'green'}>
+          {type === '835' ? '835 - Remittance' : '837 - Claims'}
+        </Tag>
+      ),
+    },
+    {
+      title: 'Organization',
+      dataIndex: 'organization',
+      key: 'organization',
     },
     {
       title: 'Upload Date',
@@ -137,9 +160,41 @@ const UploadFiles = () => {
       },
     },
     {
-      title: 'Mapping',
-      dataIndex: 'mapping',
-      key: 'mapping',
+      title: 'Missing Data',
+      dataIndex: 'hasMissingData',
+      key: 'hasMissingData',
+      render: (hasMissingData: boolean) => (
+        <div className="flex items-center space-x-1">
+          {hasMissingData ? (
+            <Tag icon={<WarningOutlined />} color="warning">
+              Missing Data
+            </Tag>
+          ) : (
+            <Tag icon={<CheckCircleOutlined />} color="success">
+              Complete
+            </Tag>
+          )}
+        </div>
+      ),
+    },
+    {
+      title: 'Actions',
+      key: 'actions',
+      render: (_: any, record: any) => (
+        <div className="flex space-x-2">
+          {record.hasMissingData && (
+            <Button
+              type="primary"
+              size="small"
+              icon={<ReloadOutlined />}
+              className="bg-warning hover:bg-warning-dark text-white"
+              onClick={() => handleReupload(record)}
+            >
+              Re-upload
+            </Button>
+          )}
+        </div>
+      ),
     },
   ];
 
@@ -183,10 +238,39 @@ const UploadFiles = () => {
     },
   ];
 
+  const handleUploadConfiguration = (values: any) => {
+    setUploadConfig(values);
+    // Here you would normally start the actual upload process with the configuration
+    console.log('Upload configuration:', values);
+    setIsUploading(true);
+    // Simulate upload progress
+    setTimeout(() => {
+      setIsUploading(false);
+      setUploadProgress(100);
+    }, 3000);
+  };
+
+  const handleReupload = (record: any) => {
+    console.log('Re-uploading file:', record);
+    // Set the upload configuration to the file's original settings
+    setUploadConfig({
+      organization: record.organization,
+      fileType: record.fileType
+    });
+    setIsUploadModalVisible(true);
+  };
+
   const uploadProps = {
     name: 'file',
     multiple: true,
     action: '/api/upload',
+    beforeUpload: (file: any) => {
+      if (!uploadConfig) {
+        setIsUploadModalVisible(true);
+        return false; // Prevent upload until configuration is set
+      }
+      return true;
+    },
     onChange(info: any) {
       const { status } = info.file;
       if (status === 'uploading') {
@@ -196,7 +280,7 @@ const UploadFiles = () => {
       if (status === 'done') {
         setIsUploading(false);
         setUploadProgress(100);
-        console.log(`${info.file.name} file uploaded successfully.`);
+        console.log(`${info.file.name} file uploaded successfully with config:`, uploadConfig);
       } else if (status === 'error') {
         setIsUploading(false);
         setUploadProgress(0);
@@ -207,6 +291,22 @@ const UploadFiles = () => {
       console.log('Dropped files', e.dataTransfer.files);
     },
   };
+
+  // Check if user has upload permission
+  if (!hasUploadPermission()) {
+    return (
+      <div className="flex items-center justify-center h-96">
+        <div className="text-center">
+          <ExclamationCircleOutlined className="text-6xl text-muted-foreground mb-4" />
+          <h3 className="text-xl font-semibold text-foreground mb-2">Access Restricted</h3>
+          <p className="text-muted-foreground">
+            You don't have permission to access the file upload section. 
+            Please contact your administrator to request upload access.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -232,8 +332,8 @@ const UploadFiles = () => {
                     Click or drag files to this area to upload
                   </p>
                   <p className="ant-upload-hint">
-                    Support for single or bulk upload. Strictly prohibited from uploading 
-                    company data or other banned files.
+                    Support for 835 (Remittance) and 837 (Claims) file formats. 
+                    Maximum file size: 50MB. Configuration required before upload.
                   </p>
                 </Dragger>
 
@@ -253,9 +353,15 @@ const UploadFiles = () => {
                     icon={<UploadOutlined />}
                     className="w-full"
                     disabled={isUploading}
+                    onClick={() => setIsUploadModalVisible(true)}
                   >
-                    {isUploading ? 'Uploading...' : 'Select Files'}
+                    Configure & Upload Files
                   </Button>
+                  {uploadConfig && (
+                    <div className="text-sm text-muted-foreground text-center">
+                      Ready to upload to {uploadConfig.organization} as {uploadConfig.fileType} files
+                    </div>
+                  )}
                 </div>
               </Card>
             </Col>
@@ -346,6 +452,13 @@ const UploadFiles = () => {
           </Card>
         </TabPane>
       </Tabs>
+
+      {/* File Upload Configuration Modal */}
+      <FileUploadModal
+        visible={isUploadModalVisible}
+        onClose={() => setIsUploadModalVisible(false)}
+        onSubmit={handleUploadConfiguration}
+      />
     </div>
   );
 };

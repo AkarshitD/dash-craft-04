@@ -1,5 +1,5 @@
-import { Card, Form, Input, Button, Table, Modal, Select, Typography, Row, Col, Statistic, Space, Tabs } from 'antd';
-import { UserAddOutlined, UserOutlined, TeamOutlined, PlusOutlined, EditOutlined, DeleteOutlined, BankOutlined } from '@ant-design/icons';
+import { Card, Form, Input, Button, Table, Modal, Select, Typography, Row, Col, Statistic, Space, Tabs, Switch } from 'antd';
+import { UserAddOutlined, UserOutlined, TeamOutlined, PlusOutlined, EditOutlined, DeleteOutlined, BankOutlined, UploadOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
 const { Title, Text } = Typography;
@@ -23,6 +23,7 @@ const AdminDashboard = () => {
       organization: 'Health Corp',
       role: 'Analyst',
       status: 'Active',
+      hasUploadAccess: true,
       createdDate: '2024-01-20',
     },
     {
@@ -33,6 +34,7 @@ const AdminDashboard = () => {
       organization: 'MedCenter',
       role: 'Manager',
       status: 'Active',
+      hasUploadAccess: false,
       createdDate: '2024-01-18',
     },
   ]);
@@ -54,6 +56,7 @@ const AdminDashboard = () => {
       organization: values.organization,
       role: values.role,
       status: 'Active',
+      hasUploadAccess: false, // Default to no upload access
       createdDate: new Date().toISOString().split('T')[0],
     };
     
@@ -81,6 +84,14 @@ const AdminDashboard = () => {
 
   const handleDeleteUser = (id: string) => {
     setUsers(users.filter(user => user.id !== id));
+  };
+
+  const handleToggleUploadAccess = (userId: string) => {
+    setUsers(users.map(user => 
+      user.id === userId 
+        ? { ...user, hasUploadAccess: !user.hasUploadAccess }
+        : user
+    ));
   };
 
   const userColumns = [
@@ -117,6 +128,23 @@ const AdminDashboard = () => {
         <span className={status === 'Active' ? 'text-success' : 'text-warning'}>
           {status}
         </span>
+      ),
+    },
+    {
+      title: 'Upload Access',
+      dataIndex: 'hasUploadAccess',
+      key: 'hasUploadAccess',
+      render: (hasAccess: boolean, record: any) => (
+        <div className="flex items-center space-x-2">
+          <Switch
+            checked={hasAccess}
+            onChange={() => handleToggleUploadAccess(record.id)}
+            size="small"
+          />
+          <span className={hasAccess ? 'text-success' : 'text-muted-foreground'}>
+            {hasAccess ? 'Enabled' : 'Disabled'}
+          </span>
+        </div>
       ),
     },
     {
@@ -248,6 +276,50 @@ const AdminDashboard = () => {
             />
           </TabPane>
           
+          <TabPane tab="File Upload Permissions" key="permissions">
+            <div className="mb-4">
+              <Title level={4} className="mb-2">File Upload Access Control</Title>
+              <Text type="secondary">Grant or revoke file upload permissions for users</Text>
+            </div>
+            
+            <Card className="mb-4 bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10">
+              <Row gutter={[16, 16]}>
+                <Col xs={24} sm={8}>
+                  <Statistic
+                    title="Users with Upload Access"
+                    value={users.filter(user => user.hasUploadAccess).length}
+                    suffix={`/ ${users.length}`}
+                    valueStyle={{ color: 'hsl(var(--primary))' }}
+                    prefix={<UploadOutlined />}
+                  />
+                </Col>
+                <Col xs={24} sm={8}>
+                  <Statistic
+                    title="Access Granted Today"
+                    value={2}
+                    valueStyle={{ color: 'hsl(var(--success))' }}
+                    prefix={<UserAddOutlined />}
+                  />
+                </Col>
+                <Col xs={24} sm={8}>
+                  <Statistic
+                    title="Pending Requests"
+                    value={1}
+                    valueStyle={{ color: 'hsl(var(--warning))' }}
+                    prefix={<TeamOutlined />}
+                  />
+                </Col>
+              </Row>
+            </Card>
+
+            <Table
+              columns={userColumns}
+              dataSource={users}
+              pagination={{ pageSize: 10 }}
+              scroll={{ x: 1000 }}
+            />
+          </TabPane>
+
           <TabPane tab="Organization Assignment" key="organizations">
             <div className="mb-4">
               <Title level={4} className="mb-2">Organization Management</Title>

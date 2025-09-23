@@ -16,6 +16,7 @@ import {
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
+import { useRole } from '@/contexts/RoleContext';
 
 const { Header, Sider, Content } = Layout;
 
@@ -23,66 +24,89 @@ const DashboardLayout = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
+  const { hasUploadPermission, canSeeAdminPanel, canSeeSuperAdminPanel, currentUser } = useRole();
 
-  const menuItems = [
-    {
-      key: '/',
-      icon: <DashboardOutlined />,
-      label: 'Dashboard',
-    },
-    {
-      key: '/provider-summary',
-      icon: <UserOutlined />,
-      label: 'Provider Summary',
-    },
-    {
-      key: '/reimbursement-summary',
-      icon: <DollarOutlined />,
-      label: 'Reimbursement Summary',
-    },
-    {
-      key: '/revenue-leakage-summary',
-      icon: <FileTextOutlined />,
-      label: 'Revenue-Leakage Summary',
-    },
-    {
-      key: '/payers',
-      icon: <TeamOutlined />,
-      label: 'Payers',
-    },
-    {
-      key: '/records',
-      icon: <FolderOutlined />,
-      label: 'Records',
-    },
-    {
-      key: '/upload-files',
-      icon: <UploadOutlined />,
-      label: 'Upload Files',
-    },
-    {
-      key: '/transaction-history',
-      icon: <HistoryOutlined />,
-      label: 'Transaction History',
-    },
-    {
-      key: 'role-management',
-      label: 'Role Management',
-      icon: <SettingOutlined />,
-      children: [
-        {
+  // Build menu items based on role
+  const getMenuItems = () => {
+    const baseItems = [
+      {
+        key: '/',
+        icon: <DashboardOutlined />,
+        label: 'Dashboard',
+      },
+      {
+        key: '/provider-summary',
+        icon: <UserOutlined />,
+        label: 'Provider Summary',
+      },
+      {
+        key: '/reimbursement-summary',
+        icon: <DollarOutlined />,
+        label: 'Reimbursement Summary',
+      },
+      {
+        key: '/revenue-leakage-summary',
+        icon: <FileTextOutlined />,
+        label: 'Revenue-Leakage Summary',
+      },
+      {
+        key: '/payers',
+        icon: <TeamOutlined />,
+        label: 'Payers',
+      },
+      {
+        key: '/records',
+        icon: <FolderOutlined />,
+        label: 'Records',
+      },
+      {
+        key: '/transaction-history',
+        icon: <HistoryOutlined />,
+        label: 'Transaction History',
+      },
+    ];
+
+    // Add upload files if user has permission
+    if (hasUploadPermission()) {
+      baseItems.splice(6, 0, {
+        key: '/upload-files',
+        icon: <UploadOutlined />,
+        label: 'Upload Files',
+      });
+    }
+
+    // Add role management based on permissions
+    if (canSeeSuperAdminPanel() || canSeeAdminPanel()) {
+      const roleManagementItem: any = {
+        key: 'role-management',
+        label: 'Role Management',
+        icon: <SettingOutlined />,
+        children: [],
+      };
+
+      if (canSeeSuperAdminPanel()) {
+        roleManagementItem.children.push({
           key: '/super-admin',
           icon: <UserOutlined />,
           label: 'SuperAdmin Panel',
-        },
-        {
+        });
+      }
+      
+      if (canSeeAdminPanel()) {
+        roleManagementItem.children.push({
           key: '/admin-management',
           icon: <TeamOutlined />,
           label: 'Admin Panel',
-        },
-      ],
-    },
-  ];
+        });
+      }
+
+      baseItems.push(roleManagementItem);
+    }
+
+    return baseItems;
+  };
+
+  const menuItems = getMenuItems();
 
   const profileMenu = (
     <Menu
@@ -184,8 +208,8 @@ const DashboardLayout = () => {
               icon={<UserOutlined />}
             />
             <div className="text-sm">
-              <div className="font-medium text-foreground">Dr. Sarah Johnson</div>
-              <div className="text-muted-foreground">Administrator</div>
+              <div className="font-medium text-foreground">{currentUser.name}</div>
+              <div className="text-muted-foreground">{currentUser.role}</div>
             </div>
           </div>
         </Dropdown>

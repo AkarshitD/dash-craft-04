@@ -4,6 +4,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ConfigProvider } from 'antd';
+import { RoleProvider } from "./contexts/RoleContext";
 import Login from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import ForgotPassword from "./pages/auth/ForgotPassword";
@@ -39,11 +40,12 @@ const antdTheme = {
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <ConfigProvider theme={antdTheme}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+    <RoleProvider>
+      <ConfigProvider theme={antdTheme}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
           <Routes>
             {/* Authentication routes */}
             <Route path="/login" element={<Login />} />
@@ -71,9 +73,10 @@ const App = () => (
             {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </ConfigProvider>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ConfigProvider>
+    </RoleProvider>
   </QueryClientProvider>
 );
 
