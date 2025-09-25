@@ -7,6 +7,7 @@ import {
   UserOutlined,
   CalendarOutlined 
 } from '@ant-design/icons';
+import ExportButton from '@/components/ExportButton';
 
 const { Search } = Input;
 const { Option } = Select;
@@ -297,6 +298,10 @@ const Records = () => {
             <RangePicker className="w-full" />
           </Col>
         </Row>
+
+        <div className="mb-4 flex justify-end">
+          <ExportButton data={recordsData} filename="records" />
+        </div>
 
         {/* Records Table */}
         <Table
