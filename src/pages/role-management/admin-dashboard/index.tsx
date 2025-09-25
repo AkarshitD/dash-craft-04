@@ -1,6 +1,7 @@
-import { Card, Form, Input, Button, Table, Modal, Select, Typography, Row, Col, Statistic, Space, Tabs, Switch } from 'antd';
-import { UserAddOutlined, UserOutlined, TeamOutlined, PlusOutlined, EditOutlined, DeleteOutlined, BankOutlined, UploadOutlined } from '@ant-design/icons';
+import { Card, Form, Input, Button, Table, Modal, Select, Typography, Row, Col, Statistic, Space, Tabs, Switch, message } from 'antd';
+import { UserAddOutlined, UserOutlined, TeamOutlined, PlusOutlined, EditOutlined, DeleteOutlined, BankOutlined, UploadOutlined, KeyOutlined } from '@ant-design/icons';
 import { useState } from 'react';
+import ExportButton from '@/components/ExportButton';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -94,6 +95,10 @@ const AdminDashboard = () => {
     ));
   };
 
+  const handleResetPassword = (user: any) => {
+    message.success(`Password reset email sent to ${user.email}`);
+  };
+
   const userColumns = [
     {
       title: 'User ID',
@@ -154,8 +159,16 @@ const AdminDashboard = () => {
         <Space>
           <Button 
             type="text" 
+            icon={<KeyOutlined />} 
+            onClick={() => handleResetPassword(record)}
+            title="Reset Password"
+            className="text-warning hover:text-warning-dark"
+          />
+          <Button 
+            type="text" 
             icon={<EditOutlined />} 
             onClick={() => handleEditUser(record)}
+            title="Edit User"
             className="text-primary hover:text-primary-dark"
           />
           <Button 
@@ -163,6 +176,7 @@ const AdminDashboard = () => {
             icon={<DeleteOutlined />} 
             danger
             onClick={() => handleDeleteUser(record.id)}
+            title="Delete User"
           />
         </Space>
       ),
@@ -259,14 +273,17 @@ const AdminDashboard = () => {
           <TabPane tab="User Management" key="users">
             <div className="mb-4 flex justify-between items-center">
               <Title level={4} className="mb-0">User Management</Title>
-              <Button 
-                type="primary" 
-                icon={<PlusOutlined />}
-                onClick={() => setIsUserModalVisible(true)}
-                className="bg-primary hover:bg-primary-dark"
-              >
-                Create New User
-              </Button>
+              <Space>
+                <ExportButton data={users} filename="users" />
+                <Button 
+                  type="primary" 
+                  icon={<PlusOutlined />}
+                  onClick={() => setIsUserModalVisible(true)}
+                  className="bg-primary hover:bg-primary-dark"
+                >
+                  Create New User
+                </Button>
+              </Space>
             </div>
             <Table
               columns={userColumns}
@@ -312,6 +329,10 @@ const AdminDashboard = () => {
               </Row>
             </Card>
 
+            <div className="mb-4 flex justify-end">
+              <ExportButton data={users} filename="user-permissions" />
+            </div>
+
             <Table
               columns={userColumns}
               dataSource={users}
@@ -325,6 +346,11 @@ const AdminDashboard = () => {
               <Title level={4} className="mb-2">Organization Management</Title>
               <Text type="secondary">Manage user assignments to organizations</Text>
             </div>
+            
+            <div className="mb-4 flex justify-end">
+              <ExportButton data={organizations} filename="organizations" />
+            </div>
+            
             <Table
               columns={organizationColumns}
               dataSource={organizations}

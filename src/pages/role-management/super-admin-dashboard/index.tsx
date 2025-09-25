@@ -1,6 +1,7 @@
-import { Card, Form, Input, Button, Table, Modal, Select, Typography, Row, Col, Statistic, Space, Tabs } from 'antd';
-import { UserAddOutlined, UserOutlined, TeamOutlined, PlusOutlined, EditOutlined, DeleteOutlined, BankOutlined } from '@ant-design/icons';
+import { Card, Form, Input, Button, Table, Modal, Select, Typography, Row, Col, Statistic, Space, Tabs, message } from 'antd';
+import { UserAddOutlined, UserOutlined, TeamOutlined, PlusOutlined, EditOutlined, DeleteOutlined, BankOutlined, KeyOutlined, EyeOutlined } from '@ant-design/icons';
 import { useState } from 'react';
+import ExportButton from '@/components/ExportButton';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -122,6 +123,15 @@ const SuperAdminDashboard = () => {
     setOrganizations(organizations.filter(org => org.id !== id));
   };
 
+  const handleViewOrganization = (org: any) => {
+    message.info(`Redirecting to ${org.name} dashboard...`);
+    // Navigate to organization dashboard
+  };
+
+  const handleResetPassword = (admin: any) => {
+    message.success(`Password reset email sent to ${admin.email}`);
+  };
+
   const organizationColumns = [
     {
       title: 'Org ID',
@@ -170,8 +180,16 @@ const SuperAdminDashboard = () => {
         <Space>
           <Button 
             type="text" 
+            icon={<EyeOutlined />} 
+            onClick={() => handleViewOrganization(record)}
+            title="View Dashboard"
+            className="text-primary hover:text-primary-dark"
+          />
+          <Button 
+            type="text" 
             icon={<EditOutlined />} 
             onClick={() => handleEditOrganization(record)}
+            title="Edit Organization"
             className="text-primary hover:text-primary-dark"
           />
           <Button 
@@ -179,6 +197,7 @@ const SuperAdminDashboard = () => {
             icon={<DeleteOutlined />} 
             danger
             onClick={() => handleDeleteOrganization(record.id)}
+            title="Delete Organization"
           />
         </Space>
       ),
@@ -229,8 +248,16 @@ const SuperAdminDashboard = () => {
         <Space>
           <Button 
             type="text" 
+            icon={<KeyOutlined />} 
+            onClick={() => handleResetPassword(record)}
+            title="Reset Password"
+            className="text-warning hover:text-warning-dark"
+          />
+          <Button 
+            type="text" 
             icon={<EditOutlined />} 
             onClick={() => handleEdit(record)}
+            title="Edit Admin"
             className="text-primary hover:text-primary-dark"
           />
           <Button 
@@ -238,6 +265,7 @@ const SuperAdminDashboard = () => {
             icon={<DeleteOutlined />} 
             danger
             onClick={() => handleDelete(record.id)}
+            title="Delete Admin"
           />
         </Space>
       ),
@@ -292,14 +320,17 @@ const SuperAdminDashboard = () => {
           <TabPane tab="Organization Management" key="organizations">
             <div className="mb-4 flex justify-between items-center">
               <Title level={4} className="mb-0">Manage Organizations</Title>
-              <Button 
-                type="primary" 
-                icon={<PlusOutlined />}
-                onClick={() => setIsOrgModalVisible(true)}
-                className="bg-primary hover:bg-primary-dark"
-              >
-                Create Organization
-              </Button>
+              <Space>
+                <ExportButton data={organizations} filename="organizations" />
+                <Button 
+                  type="primary" 
+                  icon={<PlusOutlined />}
+                  onClick={() => setIsOrgModalVisible(true)}
+                  className="bg-primary hover:bg-primary-dark"
+                >
+                  Create Organization
+                </Button>
+              </Space>
             </div>
             <Table
               columns={organizationColumns}
@@ -311,15 +342,18 @@ const SuperAdminDashboard = () => {
 
           <TabPane tab="Admin Management" key="admins">
             <div className="mb-4 flex justify-between items-center">
-              <Title level={4} className="mb-0">Manage Admins</Title>
-              <Button 
-                type="primary" 
-                icon={<PlusOutlined />}
-                onClick={() => setIsModalVisible(true)}
-                className="bg-primary hover:bg-primary-dark"
-              >
-                Create New Admin
-              </Button>
+              <Title level={4} className="mb-0">Manage Admin Users</Title>
+              <Space>
+                <ExportButton data={admins} filename="admin-users" />
+                <Button 
+                  type="primary" 
+                  icon={<PlusOutlined />}
+                  onClick={() => setIsModalVisible(true)}
+                  className="bg-primary hover:bg-primary-dark"
+                >
+                  Create New Admin
+                </Button>
+              </Space>
             </div>
             <Table
               columns={adminColumns}
