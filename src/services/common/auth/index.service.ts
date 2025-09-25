@@ -1,0 +1,112 @@
+import { AUTH } from "@/api-endpoints";
+import APIrequest from "@/services/axios";
+import { BodyData } from "@/types";
+import { clearStorage } from "@/utils/common";
+
+const AuthServices = {
+    /**
+     *
+     * @returns
+     * Function To handle auth actions
+     */
+
+    Login: async ({ bodyData }: { bodyData: BodyData }) => {
+        try {
+            clearStorage()
+            const payload = {
+                ...AUTH.LOGIN,
+                bodyData,
+            };
+            const res = await APIrequest(payload);
+            return res;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    ForgotPassword: async ({ bodyData }: { bodyData: BodyData }) => {
+        try {
+            clearStorage()
+            const payload = {
+                ...AUTH.FORGOT_PASSWORD,
+                bodyData,
+            };
+            const res = await APIrequest(payload);
+            return res;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    VerifyOTP: async ({ bodyData }: { bodyData: BodyData }) => {
+        try {
+            clearStorage()
+            const payload = {
+                ...AUTH.VERIFY_OTP,
+                bodyData,
+            };
+            const res = await APIrequest(payload);
+            return res;
+        } catch (error) {
+            throw error;
+        }
+    },
+    
+    ResentOTP: async ({ bodyData }: { bodyData: BodyData }) => {
+        try {
+            clearStorage()
+            const payload = {
+                ...AUTH.RESEND_OTP,
+                bodyData,
+            };
+            const res = await APIrequest(payload);
+            return res;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    ChangePassword: async ({ bodyData, userId }: { bodyData: BodyData, userId?: any }) => {
+        try {
+            const payload = {
+                ...AUTH.CHANGE_PASSWORD(userId),
+                bodyData,
+            };
+            const res = await APIrequest(payload);
+            return res;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    ResetPassword: async ({ bodyData, userId  }: { bodyData: BodyData,  userId?: number }) => {
+        try {
+            clearStorage()
+            const payload = {
+                ...AUTH.RESET_PASSWORD(userId),
+                bodyData,
+            };
+            const res = await APIrequest(payload);
+            return res;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+    Logout: async ({ bodyData }: { bodyData: BodyData }) => {
+        try {
+            const payload = {
+                ...AUTH.LOGOUT(),
+                
+            };
+            const res = await APIrequest(payload);
+            return res;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+
+};
+
+export default AuthServices
