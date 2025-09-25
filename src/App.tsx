@@ -6,6 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ConfigProvider } from 'antd';
 import { RoleProvider } from "./contexts/RoleContext";
 import Login from "./pages/login";
+import Register from "./pages/register";
 import ForgotPassword from "./pages/forgot-password";
 import OrganizationSelection from "./pages/org-select";
 import DashboardLayout from "./components/dashboard-layout";
@@ -19,8 +20,8 @@ import UploadFiles from "./pages/upload-files";
 import TransactionHistory from "./pages/transaction-history";
 import Profile from "./pages/profile";
 import NotFound from "./pages/not-found";
-import SuperAdminDashboard from "./pages/super-admin-dashboard";
-import AdminDashboard from "./pages/admin-dashboard";
+import SuperAdminDashboard from "./pages/role-management/super-admin-dashboard";
+import AdminDashboard from "./pages/role-management/admin-dashboard";
 import { Provider } from 'react-redux';
 import store from "./redux/store";
 const queryClient = new QueryClient();
@@ -50,6 +51,7 @@ const App = () => (
           <Routes>
             {/* Authentication routes */}
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/organization-selection" element={<OrganizationSelection />} />
             
