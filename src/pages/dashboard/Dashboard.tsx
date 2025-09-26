@@ -9,7 +9,7 @@ import {
 } from '@ant-design/icons';
 import { Line, Column, Pie } from '@ant-design/charts';
 import { useRole } from '@/contexts/RoleContext';
-import SuperAdminDashboard from '@/pages/super-admin-dashboard';
+import SuperAdminDashboard from '@/pages/role-management/super-admin-dashboard';
 
 const Dashboard = () => {
   const { currentUser } = useRole();
