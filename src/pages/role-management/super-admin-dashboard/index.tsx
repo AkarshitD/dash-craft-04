@@ -1,5 +1,5 @@
 import { Card, Form, Input, Button, Table, Modal, Select, Typography, Row, Col, Statistic, Space, Tabs } from 'antd';
-import { UserAddOutlined, UserOutlined, TeamOutlined, PlusOutlined, EditOutlined, DeleteOutlined, BankOutlined } from '@ant-design/icons';
+import { UserAddOutlined, UserOutlined, TeamOutlined, PlusOutlined, EditOutlined, DeleteOutlined, BankOutlined, ArrowLeftOutlined, EyeOutlined } from '@ant-design/icons';
 import { useState } from 'react';
 
 const { Title, Text } = Typography;
@@ -13,6 +13,8 @@ const SuperAdminDashboard = () => {
   const [isOrgModalVisible, setIsOrgModalVisible] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState<any>(null);
   const [editingOrg, setEditingOrg] = useState<any>(null);
+  const [selectedOrganization, setSelectedOrganization] = useState<any>(null);
+  const [tableState, setTableState] = useState({ current: 1, pageSize: 10 });
 
   // Mock data for organizations
   const [organizations, setOrganizations] = useState([
@@ -60,7 +62,7 @@ const SuperAdminDashboard = () => {
       id: 'ADM-002',
       name: 'Sarah Johnson',
       email: 'sarah.johnson@company.com',
-      organizations: ['Regional Hospital'],
+      organizations: ['MedCenter'],
       status: 'Active',
       createdDate: '2024-01-10',
     },
@@ -122,6 +124,14 @@ const SuperAdminDashboard = () => {
     setOrganizations(organizations.filter(org => org.id !== id));
   };
 
+  const handleOrganizationView = (record: any) => {
+    setSelectedOrganization(record);
+  };
+
+  const handleBackToOrganizations = () => {
+    setSelectedOrganization(null);
+  };
+
   const organizationColumns = [
     {
       title: 'Org ID',
@@ -170,15 +180,24 @@ const SuperAdminDashboard = () => {
         <Space>
           <Button 
             type="text" 
+            icon={<EyeOutlined />} 
+            onClick={() => handleOrganizationView(record)}
+            className="text-primary hover:text-primary-dark"
+            title="View Dashboard"
+          />
+          <Button 
+            type="text" 
             icon={<EditOutlined />} 
             onClick={() => handleEditOrganization(record)}
             className="text-primary hover:text-primary-dark"
+            title="Edit Organization"
           />
           <Button 
             type="text" 
             icon={<DeleteOutlined />} 
             danger
             onClick={() => handleDeleteOrganization(record.id)}
+            title="Delete Organization"
           />
         </Space>
       ),
@@ -244,21 +263,240 @@ const SuperAdminDashboard = () => {
     },
   ];
 
+  // Render organization overview (initial view)
+  if (!selectedOrganization) {
+    return (
+      <div className="space-y-6">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg">
+          <Title level={2} className="text-foreground mb-2">SuperAdmin Dashboard</Title>
+          <Text type="secondary">Manage administrators and system access</Text>
+        </div>
+
+        {/* Key Metrics */}
+        <Row gutter={[16, 16]}>
+          <Col xs={24} sm={8}>
+            <Card className="text-center bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
+              <Statistic
+                title="Total Admins"
+                value={admins.length}
+                valueStyle={{ color: '#1E90FF' }}
+                prefix={<UserOutlined />}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Card className="text-center bg-gradient-to-br from-success/5 to-success/10 border border-success/20">
+              <Statistic
+                title="Active Admins"
+                value={admins.filter(admin => admin.status === 'Active').length}
+                valueStyle={{ color: 'hsl(var(--success))' }}
+                prefix={<TeamOutlined />}
+              />
+            </Card>
+          </Col>
+          <Col xs={24} sm={8}>
+            <Card className="text-center bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
+              <Statistic
+                title="Organizations"
+                value={organizations.length}
+                valueStyle={{ color: 'hsl(var(--accent))' }}
+                prefix={<BankOutlined />}
+              />
+            </Card>
+          </Col>
+        </Row>
+
+        {/* Organizations Table Only */}
+        <Card className="shadow-lg">
+          <div className="mb-4 flex justify-between items-center">
+            <Title level={4} className="mb-0">Organizations</Title>
+            <Button 
+              type="primary" 
+              icon={<PlusOutlined />}
+              onClick={() => setIsOrgModalVisible(true)}
+              className="bg-primary hover:bg-primary-dark"
+            >
+              Create Organization
+            </Button>
+          </div>
+          <Table
+            columns={organizationColumns}
+            dataSource={organizations}
+            pagination={{ 
+              current: tableState.current,
+              pageSize: tableState.pageSize,
+              onChange: (page, pageSize) => setTableState({ current: page, pageSize: pageSize || 10 })
+            }}
+            scroll={{ x: 1000 }}
+          />
+        </Card>
+
+        {/* Organization Modal */}
+        <Modal
+          title={editingOrg ? "Edit Organization" : "Create New Organization"}
+          open={isOrgModalVisible}
+          onCancel={() => {
+            setIsOrgModalVisible(false);
+            setEditingOrg(null);
+            orgForm.resetFields();
+          }}
+          footer={null}
+          width={700}
+          className="top-6"
+        >
+          <div className="p-4">
+            <Form
+              form={orgForm}
+              layout="vertical"
+              onFinish={handleCreateOrganization}
+              className="space-y-4"
+            >
+              <Row gutter={[16, 16]}>
+                <Col xs={24} lg={12}>
+                  <Form.Item
+                    name="name"
+                    label="Organization Name"
+                    rules={[{ required: true, message: 'Please enter organization name!' }]}
+                  >
+                    <Input 
+                      prefix={<BankOutlined />} 
+                      placeholder="Enter organization name"
+                      size="large"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} lg={12}>
+                  <Form.Item
+                    name="type"
+                    label="Organization Type"
+                    rules={[{ required: true, message: 'Please select organization type!' }]}
+                  >
+                    <Select
+                      placeholder="Select type"
+                      size="large"
+                    >
+                      <Option value="Hospital">Hospital</Option>
+                      <Option value="Clinic">Clinic</Option>
+                      <Option value="Medical Center">Medical Center</Option>
+                      <Option value="Healthcare Network">Healthcare Network</Option>
+                    </Select>
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Form.Item
+                name="address"
+                label="Address"
+                rules={[{ required: true, message: 'Please enter address!' }]}
+              >
+                <Input.TextArea 
+                  placeholder="Enter full address"
+                  rows={2}
+                  size="large"
+                />
+              </Form.Item>
+
+              <Row gutter={[16, 16]}>
+                <Col xs={24} lg={12}>
+                  <Form.Item
+                    name="contactPerson"
+                    label="Contact Person"
+                    rules={[{ required: true, message: 'Please enter contact person!' }]}
+                  >
+                    <Input 
+                      prefix={<UserOutlined />} 
+                      placeholder="Enter contact person name"
+                      size="large"
+                    />
+                  </Form.Item>
+                </Col>
+                <Col xs={24} lg={12}>
+                  <Form.Item
+                    name="phone"
+                    label="Phone Number"
+                    rules={[{ required: true, message: 'Please enter phone number!' }]}
+                  >
+                    <Input 
+                      placeholder="Enter phone number"
+                      size="large"
+                    />
+                  </Form.Item>
+                </Col>
+              </Row>
+
+              <Form.Item
+                name="email"
+                label="Email Address"
+                rules={[
+                  { required: true, message: 'Please enter email!' },
+                  { type: 'email', message: 'Please enter valid email!' }
+                ]}
+              >
+                <Input 
+                  placeholder="Enter email address"
+                  size="large"
+                />
+              </Form.Item>
+
+              <Form.Item className="mb-0">
+                <div className="flex justify-end space-x-3 pt-4">
+                  <Button 
+                    onClick={() => {
+                      setIsOrgModalVisible(false);
+                      setEditingOrg(null);
+                      orgForm.resetFields();
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button 
+                    type="primary" 
+                    htmlType="submit"
+                    icon={<PlusOutlined />}
+                    className="bg-primary hover:bg-primary-dark"
+                  >
+                    {editingOrg ? 'Update Organization' : 'Create Organization'}
+                  </Button>
+                </div>
+              </Form.Item>
+            </Form>
+          </div>
+        </Modal>
+      </div>
+    );
+  }
+
+  // Render organization-specific dashboard
   return (
     <div className="space-y-6">
-      {/* Header */}
+      {/* Header with Back Button */}
       <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg">
-        <Title level={2} className="text-foreground mb-2">SuperAdmin Dashboard</Title>
-        <Text type="secondary">Manage administrators and system access</Text>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="flex items-center gap-3 mb-2">
+              <Button 
+                type="text" 
+                icon={<ArrowLeftOutlined />}
+                onClick={handleBackToOrganizations}
+                className="text-primary hover:text-primary-dark"
+              >
+                Back to Organizations
+              </Button>
+            </div>
+            <Title level={2} className="text-foreground mb-2">{selectedOrganization.name} Dashboard</Title>
+            <Text type="secondary">Manage {selectedOrganization.name} administrators and access</Text>
+          </div>
+        </div>
       </div>
 
-      {/* Key Metrics */}
+      {/* Organization-specific Key Metrics */}
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={8}>
           <Card className="text-center bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
             <Statistic
-              title="Total Admins"
-              value={admins.length}
+              title="Total Users"
+              value={selectedOrganization.userCount}
               valueStyle={{ color: '#1E90FF' }}
               prefix={<UserOutlined />}
             />
@@ -267,8 +505,8 @@ const SuperAdminDashboard = () => {
         <Col xs={24} sm={8}>
           <Card className="text-center bg-gradient-to-br from-success/5 to-success/10 border border-success/20">
             <Statistic
-              title="Active Admins"
-              value={admins.filter(admin => admin.status === 'Active').length}
+              title="Active Users"
+              value={selectedOrganization.userCount}
               valueStyle={{ color: 'hsl(var(--success))' }}
               prefix={<TeamOutlined />}
             />
@@ -277,41 +515,21 @@ const SuperAdminDashboard = () => {
         <Col xs={24} sm={8}>
           <Card className="text-center bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
             <Statistic
-              title="Organizations"
-              value={new Set(admins.flatMap(admin => admin.organizations)).size}
-              valueStyle={{ color: 'hsl(var(--accent))' }}
-              prefix={<TeamOutlined />}
+              title="Contact Person"
+              value={selectedOrganization.contactPerson}
+              valueStyle={{ color: 'hsl(var(--accent))', fontSize: '16px' }}
+              prefix={<UserOutlined />}
             />
           </Card>
         </Col>
       </Row>
 
-      {/* Management Tabs */}
+      {/* Management Tabs for Selected Organization */}
       <Card className="shadow-lg">
-        <Tabs defaultActiveKey="organizations" size="large">
-          <TabPane tab="Organization Management" key="organizations">
-            <div className="mb-4 flex justify-between items-center">
-              <Title level={4} className="mb-0">Manage Organizations</Title>
-              <Button 
-                type="primary" 
-                icon={<PlusOutlined />}
-                onClick={() => setIsOrgModalVisible(true)}
-                className="bg-primary hover:bg-primary-dark"
-              >
-                Create Organization
-              </Button>
-            </div>
-            <Table
-              columns={organizationColumns}
-              dataSource={organizations}
-              pagination={{ pageSize: 10 }}
-              scroll={{ x: 1000 }}
-            />
-          </TabPane>
-
+        <Tabs defaultActiveKey="admins" size="large">
           <TabPane tab="Admin Management" key="admins">
             <div className="mb-4 flex justify-between items-center">
-              <Title level={4} className="mb-0">Manage Admins</Title>
+              <Title level={4} className="mb-0">Manage {selectedOrganization.name} Admins</Title>
               <Button 
                 type="primary" 
                 icon={<PlusOutlined />}
@@ -323,7 +541,9 @@ const SuperAdminDashboard = () => {
             </div>
             <Table
               columns={adminColumns}
-              dataSource={admins}
+              dataSource={admins.filter(admin => 
+                admin.organizations.includes(selectedOrganization.name)
+              )}
               pagination={{ pageSize: 10 }}
               scroll={{ x: 800 }}
             />
@@ -349,6 +569,7 @@ const SuperAdminDashboard = () => {
             layout="vertical"
             onFinish={handleCreateAdmin}
             className="space-y-4"
+            initialValues={{ organizations: [selectedOrganization.name] }}
           >
             <Form.Item
               name="name"
@@ -409,138 +630,6 @@ const SuperAdminDashboard = () => {
                   className="bg-primary hover:bg-primary-dark"
                 >
                   {editingAdmin ? 'Update Admin' : 'Create Admin'}
-                </Button>
-              </div>
-            </Form.Item>
-          </Form>
-        </div>
-      </Modal>
-
-      {/* Create/Edit Organization Modal */}
-      <Modal
-        title={editingOrg ? "Edit Organization" : "Create New Organization"}
-        open={isOrgModalVisible}
-        onCancel={() => {
-          setIsOrgModalVisible(false);
-          setEditingOrg(null);
-          orgForm.resetFields();
-        }}
-        footer={null}
-        width={700}
-        className="top-6"
-      >
-        <div className="p-4">
-          <Form
-            form={orgForm}
-            layout="vertical"
-            onFinish={handleCreateOrganization}
-            className="space-y-4"
-          >
-            <Row gutter={[16, 16]}>
-              <Col xs={24} lg={12}>
-                <Form.Item
-                  name="name"
-                  label="Organization Name"
-                  rules={[{ required: true, message: 'Please enter organization name!' }]}
-                >
-                  <Input 
-                    prefix={<BankOutlined />} 
-                    placeholder="Enter organization name"
-                    size="large"
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} lg={12}>
-                <Form.Item
-                  name="type"
-                  label="Organization Type"
-                  rules={[{ required: true, message: 'Please select organization type!' }]}
-                >
-                  <Select
-                    placeholder="Select type"
-                    size="large"
-                  >
-                    <Option value="Hospital">Hospital</Option>
-                    <Option value="Clinic">Clinic</Option>
-                    <Option value="Medical Center">Medical Center</Option>
-                    <Option value="Healthcare Network">Healthcare Network</Option>
-                  </Select>
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Form.Item
-              name="address"
-              label="Address"
-              rules={[{ required: true, message: 'Please enter address!' }]}
-            >
-              <Input.TextArea 
-                placeholder="Enter full address"
-                rows={2}
-                size="large"
-              />
-            </Form.Item>
-
-            <Row gutter={[16, 16]}>
-              <Col xs={24} lg={12}>
-                <Form.Item
-                  name="contactPerson"
-                  label="Contact Person"
-                  rules={[{ required: true, message: 'Please enter contact person!' }]}
-                >
-                  <Input 
-                    prefix={<UserOutlined />} 
-                    placeholder="Enter contact person name"
-                    size="large"
-                  />
-                </Form.Item>
-              </Col>
-              <Col xs={24} lg={12}>
-                <Form.Item
-                  name="phone"
-                  label="Phone Number"
-                  rules={[{ required: true, message: 'Please enter phone number!' }]}
-                >
-                  <Input 
-                    placeholder="Enter phone number"
-                    size="large"
-                  />
-                </Form.Item>
-              </Col>
-            </Row>
-
-            <Form.Item
-              name="email"
-              label="Email Address"
-              rules={[
-                { required: true, message: 'Please enter email!' },
-                { type: 'email', message: 'Please enter valid email!' }
-              ]}
-            >
-              <Input 
-                placeholder="Enter email address"
-                size="large"
-              />
-            </Form.Item>
-
-            <Form.Item className="mb-0">
-              <div className="flex justify-end space-x-3 pt-4">
-                <Button 
-                  onClick={() => {
-                    setIsOrgModalVisible(false);
-                    setEditingOrg(null);
-                    orgForm.resetFields();
-                  }}
-                >
-                  Cancel
-                </Button>
-                <Button 
-                  type="primary" 
-                  htmlType="submit"
-                  icon={<BankOutlined />}
-                  className="bg-primary hover:bg-primary-dark"
-                >
-                  {editingOrg ? 'Update Organization' : 'Create Organization'}
                 </Button>
               </div>
             </Form.Item>
