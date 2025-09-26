@@ -1,4 +1,4 @@
-import { Layout, Menu, Dropdown, Avatar, Badge, Button, Select } from 'antd';
+import { Layout, Menu, Dropdown, Avatar, Badge, Button } from 'antd';
 import {
   DashboardOutlined,
   UserOutlined,
@@ -13,15 +13,12 @@ import {
   BellOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  BankOutlined,
-  SwapOutlined,
 } from '@ant-design/icons';
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRole } from '@/contexts/RoleContext';
 
 const { Header, Sider, Content } = Layout;
-const { Option } = Select;
 
 const DashboardLayout = () => {
   const navigate = useNavigate();
@@ -29,81 +26,81 @@ const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { hasUploadPermission, canSeeAdminPanel, canSeeSuperAdminPanel, currentUser } = useRole();
 
-  // Mock organizations for switching
-  const organizations = [
-    { id: 'org-1', name: 'Health Corp', type: 'Hospital' },
-    { id: 'org-2', name: 'MedCenter', type: 'Clinic' },
-    { id: 'org-3', name: 'Regional Hospital', type: 'Hospital' },
-    { id: 'org-4', name: 'City Clinic', type: 'Clinic' },
-  ];
-
-  const [selectedOrg, setSelectedOrg] = useState(currentUser.organization || 'Health Corp');
-
-  // Redirect SuperAdmin to their dashboard if on default route
-  useEffect(() => {
-    if (currentUser.role === 'SuperAdmin' && location.pathname === '/') {
-      navigate('/super-admin');
-    } else if (currentUser.role === 'Admin' && location.pathname === '/') {
-      navigate('/admin-management');
-    }
-  }, [currentUser.role, location.pathname, navigate]);
-
   // Build menu items based on role
   const getMenuItems = () => {
-    const baseItems = [];
-
-    // Always show dashboard for regular users
-    if (currentUser.role === 'User') {
-      baseItems.push({
+    const baseItems = [
+      {
         key: '/',
         icon: <DashboardOutlined />,
         label: 'Dashboard',
-      });
-    }
-
-    // Show main dashboard items for all users except when they're in their role-specific areas
-    if (currentUser.role !== 'SuperAdmin' || location.pathname === '/') {
-      baseItems.push(
-        {
-          key: '/provider-summary',
-          icon: <UserOutlined />,
-          label: 'Provider Summary',
-        },
-        {
-          key: '/reimbursement-summary',
-          icon: <DollarOutlined />,
-          label: 'Reimbursement Summary',
-        },
-        {
-          key: '/revenue-leakage-summary',
-          icon: <FileTextOutlined />,
-          label: 'Revenue-Leakage Summary',
-        },
-        {
-          key: '/payers',
-          icon: <TeamOutlined />,
-          label: 'Payers',
-        },
-        {
-          key: '/records',
-          icon: <FolderOutlined />,
-          label: 'Records',
-        },
-        {
-          key: '/transaction-history',
-          icon: <HistoryOutlined />,
-          label: 'Transaction History',
-        }
-      );
-    }
+      },
+      {
+        key: '/provider-summary',
+        icon: <UserOutlined />,
+        label: 'Provider Summary',
+      },
+      {
+        key: '/reimbursement-summary',
+        icon: <DollarOutlined />,
+        label: 'Reimbursement Summary',
+      },
+      {
+        key: '/revenue-leakage-summary',
+        icon: <FileTextOutlined />,
+        label: 'Revenue-Leakage Summary',
+      },
+      {
+        key: '/payers',
+        icon: <TeamOutlined />,
+        label: 'Payers',
+      },
+      {
+        key: '/records',
+        icon: <FolderOutlined />,
+        label: 'Records',
+      },
+      {
+        key: '/transaction-history',
+        icon: <HistoryOutlined />,
+        label: 'Transaction History',
+      },
+    ];
 
     // Add upload files if user has permission
     if (hasUploadPermission()) {
-      baseItems.splice(-1, 0, {
+      baseItems.splice(6, 0, {
         key: '/upload-files',
         icon: <UploadOutlined />,
         label: 'Upload Files',
       });
+    }
+
+    // Add role management based on permissions
+    if (canSeeSuperAdminPanel() || canSeeAdminPanel()) {
+      const roleManagementItem: any = {
+        key: 'role-management',
+        label: 'Role Management',
+        icon: <SettingOutlined />,
+        children: [],
+      };
+
+      if (canSeeSuperAdminPanel()) {
+        roleManagementItem.children.push({
+          key: '/super-admin',
+          icon: <UserOutlined />,
+          label: 'SuperAdmin Panel',
+        });
+      }
+      
+      if (canSeeAdminPanel()) {
+        roleManagementItem.children.push({
+          key: '/admin-management',
+          icon: <TeamOutlined />,
+          label: 'Admin Panel',
+        });
+      }
+
+      baseItems.push(roleManagementItem);
     }
 
     return baseItems;
@@ -195,37 +192,9 @@ const DashboardLayout = () => {
           onClick={() => setCollapsed(!collapsed)}
           className="text-lg"
         />
-        
-        {/* Organization Switcher - Only for non-SuperAdmin users */}
-        {currentUser.role !== 'SuperAdmin' && (
-          <div className="flex items-center space-x-2">
-            <BankOutlined className="text-muted-foreground" />
-            <Select
-              value={selectedOrg}
-              onChange={setSelectedOrg}
-              size="small"
-              className="min-w-40"
-              suffixIcon={<SwapOutlined />}
-            >
-              {organizations.map(org => (
-                <Option key={org.id} value={org.name}>
-                  <div className="flex items-center space-x-2">
-                    <BankOutlined className="text-xs" />
-                    <span>{org.name}</span>
-                  </div>
-                </Option>
-              ))}
-            </Select>
-          </div>
-        )}
-        
         <div>
           <h1 className="text-xl font-semibold text-foreground mb-0">
-            {currentUser.role === 'SuperAdmin' && location.pathname === '/super-admin' 
-              ? 'Super Admin Dashboard'
-              : currentUser.role === 'Admin' && location.pathname === '/admin-management'
-              ? 'Admin Dashboard'
-              : menuItems.find(item => item.key === location.pathname)?.label || 'Dashboard'}
+            {menuItems.find(item => item.key === location.pathname)?.label || 'Dashboard'}
           </h1>
         </div>
       </div>

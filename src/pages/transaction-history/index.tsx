@@ -9,7 +9,6 @@ import {
   ExclamationCircleOutlined 
 } from '@ant-design/icons';
 import { Line, Column } from '@ant-design/charts';
-import ExportButton from '@/components/ExportButton';
 
 const { RangePicker } = DatePicker;
 const { Option } = Select;
@@ -333,7 +332,13 @@ const TransactionHistory = () => {
               </Select>
             </Col>
             <Col xs={24} sm={4}>
-              <ExportButton data={transactionData} filename="transactions" />
+              <Button 
+                type="primary" 
+                icon={<DownloadOutlined />}
+                className="w-full"
+              >
+                Export
+              </Button>
             </Col>
           </Row>
           <Row gutter={16} className="mt-4">

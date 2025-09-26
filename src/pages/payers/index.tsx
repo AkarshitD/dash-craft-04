@@ -1,7 +1,6 @@
 import { Card, Table, Row, Col, Statistic, Tag, Progress, Tabs } from 'antd';
 import { DollarOutlined, ClockCircleOutlined, PercentageOutlined, FileTextOutlined } from '@ant-design/icons';
 import { Column, Line } from '@ant-design/charts';
-import ExportButton from '@/components/ExportButton';
 
 const { TabPane } = Tabs;
 
@@ -200,8 +199,8 @@ const Payers = () => {
           </Card>
         </Col>
       </Row>
-   <Card title="Payer Details" extra={<ExportButton data={payerData} filename="payers" />}>
-             <Table
+   <Card title="Payer Details">
+            <Table
               columns={columns}
               dataSource={payerData}
               pagination={{
