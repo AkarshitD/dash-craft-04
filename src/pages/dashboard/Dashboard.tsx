@@ -1,4 +1,4 @@
-import { Row, Col, Card, Statistic, Progress, Table } from 'antd';
+import { Card, Row, Col, Statistic, Progress, Table } from 'antd';
 import { 
   ArrowUpOutlined, 
   ArrowDownOutlined, 
@@ -8,8 +8,16 @@ import {
   TeamOutlined 
 } from '@ant-design/icons';
 import { Line, Column, Pie } from '@ant-design/charts';
+import { useRole } from '@/contexts/RoleContext';
+import SuperAdminDashboard from '@/pages/super-admin-dashboard';
 
 const Dashboard = () => {
+  const { currentUser } = useRole();
+
+  // Show Super Admin Dashboard for SuperAdmin role
+  if (currentUser.role === 'SuperAdmin') {
+    return <SuperAdminDashboard />;
+  }
   // Mock data for charts
   const revenueData = [
     { month: 'Jan', revenue: 45000 },

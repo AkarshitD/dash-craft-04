@@ -17,6 +17,7 @@ import {
 import { Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { useState } from 'react';
 import { useRole } from '@/contexts/RoleContext';
+import OrganizationSwitcher from '@/components/OrganizationSwitcher';
 
 const { Header, Sider, Content } = Layout;
 
@@ -200,6 +201,7 @@ const DashboardLayout = () => {
       </div>
 
       <div className="flex items-center space-x-4">
+        <OrganizationSwitcher />
         <Dropdown overlay={profileMenu} placement="bottomRight">
           <div className="cursor-pointer flex items-center space-x-3 px-3 py-1 rounded-lg hover:bg-secondary">
             <Avatar

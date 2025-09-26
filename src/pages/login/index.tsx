@@ -46,14 +46,18 @@ const Login = () => {
   const onFinish = async (values: { email: string; password: string }) => {
     setLoading(true);
     const user = mockUsers.find(u => u.email === values.email);
-    // const res = await AuthServices.Login({bodyData:values})
+    
     if (user && values.password === 'password123') {
-
       setCurrentUser(user);
       message.success(`Welcome ${user.name}!`);
       setTimeout(() => {
         setLoading(false);
-        navigate('/organization-selection');
+        // SuperAdmin goes directly to dashboard, others to organization selection
+        if (user.role === 'SuperAdmin') {
+          navigate('/');
+        } else {
+          navigate('/organization-selection');
+        }
       }, 1000);
     } else {
       setLoading(false);
@@ -141,12 +145,6 @@ const Login = () => {
           <div>
             <Link to="/forgot-password" className="text-primary hover:text-primary-dark">
               Forgot your password?
-            </Link>
-          </div>
-          <div>
-            <Text type="secondary">Don't have an account? </Text>
-            <Link to="/register" className="text-primary hover:text-primary-dark font-medium">
-              Sign up here
             </Link>
           </div>
           </div>

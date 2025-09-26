@@ -1,4 +1,4 @@
-import { PROFILE } from "@/api-endpoints";
+import { PROFILE } from "@/api-endpoints/admin";
 import APIrequest from "@/services/axios";
 import { BodyData } from "@/types";
 import { clearStorage } from "@/utils/common";

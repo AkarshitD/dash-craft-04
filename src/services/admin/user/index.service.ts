@@ -1,4 +1,4 @@
-import { USER } from "@/api-endpoints";
+import { ADMIN } from "@/api-endpoints/admin";
 import APIrequest from "@/services/axios";
 import { BodyData, QueryParams } from "@/types";
 
@@ -12,7 +12,7 @@ const UserServices = {
     GetUsers: async ({queryParams} : {queryParams: QueryParams}) => {
         try {
             const payload = {
-                ...USER.GET_ALL_USER,
+                ...ADMIN.GET_USERS,
                 queryParams
             };
             const res = await APIrequest(payload);
@@ -27,7 +27,7 @@ const UserServices = {
     UpdateUsers: async ({bodyData, userId}:{userId?: any, bodyData: BodyData}) => {
         try {
             const payload = {
-                ...USER.UPDATE_USER(userId),
+                ...ADMIN.UPDATE_USER,
                 bodyData
             };
             const res = await APIrequest(payload);
@@ -42,7 +42,7 @@ const UserServices = {
     DeleteUserById: async ({userId}:{userId?: any}) => {
         try {
             const payload = {
-                ...USER.DELETE_USER(userId),
+                ...ADMIN.DELETE_USER,
             };
             const res = await APIrequest(payload);
             return res;
@@ -53,10 +53,10 @@ const UserServices = {
         }
     },
 
-    SuspendUserById: async ({userId, bodyData}:{userId?: any, bodyData: BodyData}) => {
+    ResetPasswordById: async ({userId, bodyData}:{userId?: any, bodyData: BodyData}) => {
         try {
             const payload = {
-                ...USER.USER_SUSPEND(userId),
+                ...ADMIN.RESET_PASSWORD,
                 bodyData
             };
             const res = await APIrequest(payload);
