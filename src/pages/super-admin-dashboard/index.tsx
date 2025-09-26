@@ -1,6 +1,7 @@
 import { Card, Form, Input, Button, Table, Modal, Select, Typography, Row, Col, Statistic, Space, Tabs, message } from 'antd';
 import { UserAddOutlined, UserOutlined, TeamOutlined, PlusOutlined, EditOutlined, DeleteOutlined, BankOutlined, KeyOutlined, EyeOutlined } from '@ant-design/icons';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ExportButton from '@/components/ExportButton';
 
 const { Title, Text } = Typography;
@@ -8,6 +9,7 @@ const { Option } = Select;
 const { TabPane } = Tabs;
 
 const SuperAdminDashboard = () => {
+  const navigate = useNavigate();
   const [form] = Form.useForm();
   const [orgForm] = Form.useForm();
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -43,9 +45,22 @@ const SuperAdminDashboard = () => {
       createdDate: '2024-01-08',
       userCount: 12,
     },
+    {
+      key: '3',
+      id: 'ORG-003',
+      name: 'Regional Hospital',
+      type: 'Hospital',
+      address: '789 Health Blvd, Care City, CC 54321',
+      contactPerson: 'Dr. Robert Davis',
+      phone: '+1 (555) 456-7890',
+      email: 'admin@regionalhospital.com',
+      status: 'Active',
+      createdDate: '2024-01-05',
+      userCount: 28,
+    },
   ]);
 
-  // Mock data for existing admins
+  // Mock data for admin users
   const [admins, setAdmins] = useState([
     {
       key: '1',
@@ -65,6 +80,15 @@ const SuperAdminDashboard = () => {
       status: 'Active',
       createdDate: '2024-01-10',
     },
+    {
+      key: '3',
+      id: 'ADM-003',
+      name: 'Michael Davis',
+      email: 'michael.davis@company.com',
+      organizations: ['Health Corp'],
+      status: 'Active',
+      createdDate: '2024-01-12',
+    },
   ]);
 
   const handleCreateAdmin = (values: any) => {
@@ -81,16 +105,18 @@ const SuperAdminDashboard = () => {
     setAdmins([...admins, newAdmin]);
     setIsModalVisible(false);
     form.resetFields();
+    message.success('Admin user created successfully');
   };
 
-  const handleEdit = (record: any) => {
+  const handleEditAdmin = (record: any) => {
     setEditingAdmin(record);
     form.setFieldsValue(record);
     setIsModalVisible(true);
   };
 
-  const handleDelete = (id: string) => {
+  const handleDeleteAdmin = (id: string) => {
     setAdmins(admins.filter(admin => admin.id !== id));
+    message.success('Admin user deleted successfully');
   };
 
   const handleCreateOrganization = (values: any) => {
@@ -111,6 +137,7 @@ const SuperAdminDashboard = () => {
     setOrganizations([...organizations, newOrg]);
     setIsOrgModalVisible(false);
     orgForm.resetFields();
+    message.success('Organization created successfully');
   };
 
   const handleEditOrganization = (record: any) => {
@@ -121,11 +148,13 @@ const SuperAdminDashboard = () => {
 
   const handleDeleteOrganization = (id: string) => {
     setOrganizations(organizations.filter(org => org.id !== id));
+    message.success('Organization deleted successfully');
   };
 
   const handleViewOrganization = (org: any) => {
     message.info(`Redirecting to ${org.name} dashboard...`);
-    // Navigate to organization dashboard
+    // Navigate to organization-specific dashboard
+    navigate(`/organization/${org.id}`);
   };
 
   const handleResetPassword = (admin: any) => {
@@ -137,33 +166,39 @@ const SuperAdminDashboard = () => {
       title: 'Org ID',
       dataIndex: 'id',
       key: 'id',
+      width: 100,
     },
     {
       title: 'Organization Name',
       dataIndex: 'name',
       key: 'name',
+      width: 150,
     },
     {
       title: 'Type',
       dataIndex: 'type',
       key: 'type',
+      width: 100,
     },
     {
       title: 'Contact Person',
       dataIndex: 'contactPerson',
       key: 'contactPerson',
+      width: 150,
     },
     {
       title: 'Phone',
       dataIndex: 'phone',
       key: 'phone',
+      width: 150,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      width: 100,
       render: (status: string) => (
-        <span className={status === 'Active' ? 'text-success' : 'text-warning'}>
+        <span className={status === 'Active' ? 'text-success font-medium' : 'text-warning font-medium'}>
           {status}
         </span>
       ),
@@ -172,10 +207,12 @@ const SuperAdminDashboard = () => {
       title: 'Users',
       dataIndex: 'userCount',
       key: 'userCount',
+      width: 80,
     },
     {
       title: 'Actions',
       key: 'actions',
+      width: 120,
       render: (_, record: any) => (
         <Space>
           <Button 
@@ -190,7 +227,7 @@ const SuperAdminDashboard = () => {
             icon={<EditOutlined />} 
             onClick={() => handleEditOrganization(record)}
             title="Edit Organization"
-            className="text-primary hover:text-primary-dark"
+            className="text-accent hover:text-accent-dark"
           />
           <Button 
             type="text" 
@@ -209,29 +246,34 @@ const SuperAdminDashboard = () => {
       title: 'Admin ID',
       dataIndex: 'id',
       key: 'id',
+      width: 100,
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      width: 150,
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+      width: 200,
     },
     {
       title: 'Organizations',
       dataIndex: 'organizations',
       key: 'organizations',
+      width: 200,
       render: (orgs: string[]) => orgs.join(', '),
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      width: 100,
       render: (status: string) => (
-        <span className={status === 'Active' ? 'text-success' : 'text-warning'}>
+        <span className={status === 'Active' ? 'text-success font-medium' : 'text-warning font-medium'}>
           {status}
         </span>
       ),
@@ -240,10 +282,12 @@ const SuperAdminDashboard = () => {
       title: 'Created Date',
       dataIndex: 'createdDate',
       key: 'createdDate',
+      width: 120,
     },
     {
       title: 'Actions',
       key: 'actions',
+      width: 120,
       render: (_, record: any) => (
         <Space>
           <Button 
@@ -256,7 +300,7 @@ const SuperAdminDashboard = () => {
           <Button 
             type="text" 
             icon={<EditOutlined />} 
-            onClick={() => handleEdit(record)}
+            onClick={() => handleEditAdmin(record)}
             title="Edit Admin"
             className="text-primary hover:text-primary-dark"
           />
@@ -264,7 +308,7 @@ const SuperAdminDashboard = () => {
             type="text" 
             icon={<DeleteOutlined />} 
             danger
-            onClick={() => handleDelete(record.id)}
+            onClick={() => handleDeleteAdmin(record.id)}
             title="Delete Admin"
           />
         </Space>
@@ -275,39 +319,49 @@ const SuperAdminDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg">
-        <Title level={2} className="text-foreground mb-2">SuperAdmin Dashboard</Title>
-        <Text type="secondary">Manage administrators and system access</Text>
+      <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg border border-primary/20">
+        <Title level={2} className="text-foreground mb-2">Super Admin Dashboard</Title>
+        <Text type="secondary">Manage organizations, administrators, and system access</Text>
       </div>
 
       {/* Key Metrics */}
       <Row gutter={[16, 16]}>
-        <Col xs={24} sm={8}>
+        <Col xs={24} sm={6}>
           <Card className="text-center bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
+            <Statistic
+              title="Total Organizations"
+              value={organizations.length}
+              valueStyle={{ color: 'hsl(var(--primary))' }}
+              prefix={<BankOutlined />}
+            />
+          </Card>
+        </Col>
+        <Col xs={24} sm={6}>
+          <Card className="text-center bg-gradient-to-br from-success/5 to-success/10 border border-success/20">
             <Statistic
               title="Total Admins"
               value={admins.length}
-              valueStyle={{ color: '#1E90FF' }}
+              valueStyle={{ color: 'hsl(var(--success))' }}
               prefix={<UserOutlined />}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={8}>
-          <Card className="text-center bg-gradient-to-br from-success/5 to-success/10 border border-success/20">
+        <Col xs={24} sm={6}>
+          <Card className="text-center bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
             <Statistic
               title="Active Admins"
               value={admins.filter(admin => admin.status === 'Active').length}
-              valueStyle={{ color: 'hsl(var(--success))' }}
+              valueStyle={{ color: 'hsl(var(--accent))' }}
               prefix={<TeamOutlined />}
             />
           </Card>
         </Col>
-        <Col xs={24} sm={8}>
-          <Card className="text-center bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
+        <Col xs={24} sm={6}>
+          <Card className="text-center bg-gradient-to-br from-warning/5 to-warning/10 border border-warning/20">
             <Statistic
-              title="Organizations"
-              value={new Set(admins.flatMap(admin => admin.organizations)).size}
-              valueStyle={{ color: 'hsl(var(--accent))' }}
+              title="Total Users"
+              value={organizations.reduce((acc, org) => acc + org.userCount, 0)}
+              valueStyle={{ color: 'hsl(var(--warning))' }}
               prefix={<TeamOutlined />}
             />
           </Card>
@@ -336,7 +390,8 @@ const SuperAdminDashboard = () => {
               columns={organizationColumns}
               dataSource={organizations}
               pagination={{ pageSize: 10 }}
-              scroll={{ x: 1000 }}
+              scroll={{ x: 1200 }}
+              className="border border-border rounded-lg"
             />
           </TabPane>
 
@@ -359,7 +414,8 @@ const SuperAdminDashboard = () => {
               columns={adminColumns}
               dataSource={admins}
               pagination={{ pageSize: 10 }}
-              scroll={{ x: 800 }}
+              scroll={{ x: 1000 }}
+              className="border border-border rounded-lg"
             />
           </TabPane>
         </Tabs>
@@ -375,6 +431,7 @@ const SuperAdminDashboard = () => {
           form.resetFields();
         }}
         footer={null}
+        width={600}
         className="top-6"
       >
         <div className="p-4">
@@ -418,6 +475,7 @@ const SuperAdminDashboard = () => {
                 mode="multiple"
                 placeholder="Select organizations"
                 size="large"
+                showSearch
               >
                 {organizations.map(org => (
                   <Option key={org.id} value={org.name}>{org.name}</Option>
@@ -509,7 +567,7 @@ const SuperAdminDashboard = () => {
               rules={[{ required: true, message: 'Please enter address!' }]}
             >
               <Input.TextArea 
-                placeholder="Enter full address"
+                placeholder="Enter complete address"
                 rows={2}
                 size="large"
               />
@@ -523,7 +581,6 @@ const SuperAdminDashboard = () => {
                   rules={[{ required: true, message: 'Please enter contact person!' }]}
                 >
                   <Input 
-                    prefix={<UserOutlined />} 
                     placeholder="Enter contact person name"
                     size="large"
                   />

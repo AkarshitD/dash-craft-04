@@ -14,7 +14,7 @@ const AdminDashboard = () => {
   const [isAssignModalVisible, setIsAssignModalVisible] = useState(false);
   const [editingUser, setEditingUser] = useState<any>(null);
 
-  // Mock data for users
+  // Mock data for users created by this admin
   const [users, setUsers] = useState([
     {
       key: '1',
@@ -38,9 +38,31 @@ const AdminDashboard = () => {
       hasUploadAccess: false,
       createdDate: '2024-01-18',
     },
+    {
+      key: '3',
+      id: 'USR-003',
+      name: 'Carol Martinez',
+      email: 'carol.martinez@healthcare.com',
+      organization: 'Health Corp',
+      role: 'Coordinator',
+      status: 'Active',
+      hasUploadAccess: true,
+      createdDate: '2024-01-16',
+    },
+    {
+      key: '4',
+      id: 'USR-004',
+      name: 'David Chen',
+      email: 'david.chen@healthcare.com',
+      organization: 'Regional Hospital',
+      role: 'Specialist',
+      status: 'Active',
+      hasUploadAccess: false,
+      createdDate: '2024-01-14',
+    },
   ]);
 
-  // Mock organizations
+  // Mock organizations accessible to this admin
   const organizations = [
     { id: 'org-1', name: 'Health Corp', users: 15, type: 'Hospital' },
     { id: 'org-2', name: 'MedCenter', users: 12, type: 'Clinic' },
@@ -64,6 +86,7 @@ const AdminDashboard = () => {
     setUsers([...users, newUser]);
     setIsUserModalVisible(false);
     userForm.resetFields();
+    message.success('User created successfully');
   };
 
   const handleAssignUser = (values: any) => {
@@ -75,6 +98,7 @@ const AdminDashboard = () => {
     setUsers(updatedUsers);
     setIsAssignModalVisible(false);
     assignForm.resetFields();
+    message.success('User assigned to organization successfully');
   };
 
   const handleEditUser = (record: any) => {
@@ -85,6 +109,7 @@ const AdminDashboard = () => {
 
   const handleDeleteUser = (id: string) => {
     setUsers(users.filter(user => user.id !== id));
+    message.success('User deleted successfully');
   };
 
   const handleToggleUploadAccess = (userId: string) => {
@@ -93,6 +118,8 @@ const AdminDashboard = () => {
         ? { ...user, hasUploadAccess: !user.hasUploadAccess }
         : user
     ));
+    const user = users.find(u => u.id === userId);
+    message.success(`Upload access ${user?.hasUploadAccess ? 'disabled' : 'enabled'} for ${user?.name}`);
   };
 
   const handleResetPassword = (user: any) => {
@@ -104,33 +131,39 @@ const AdminDashboard = () => {
       title: 'User ID',
       dataIndex: 'id',
       key: 'id',
+      width: 100,
     },
     {
       title: 'Name',
       dataIndex: 'name',
       key: 'name',
+      width: 150,
     },
     {
       title: 'Email',
       dataIndex: 'email',
       key: 'email',
+      width: 200,
     },
     {
       title: 'Organization',
       dataIndex: 'organization',
       key: 'organization',
+      width: 150,
     },
     {
       title: 'Role',
       dataIndex: 'role',
       key: 'role',
+      width: 100,
     },
     {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
+      width: 100,
       render: (status: string) => (
-        <span className={status === 'Active' ? 'text-success' : 'text-warning'}>
+        <span className={status === 'Active' ? 'text-success font-medium' : 'text-warning font-medium'}>
           {status}
         </span>
       ),
@@ -139,6 +172,7 @@ const AdminDashboard = () => {
       title: 'Upload Access',
       dataIndex: 'hasUploadAccess',
       key: 'hasUploadAccess',
+      width: 150,
       render: (hasAccess: boolean, record: any) => (
         <div className="flex items-center space-x-2">
           <Switch
@@ -146,7 +180,7 @@ const AdminDashboard = () => {
             onChange={() => handleToggleUploadAccess(record.id)}
             size="small"
           />
-          <span className={hasAccess ? 'text-success' : 'text-muted-foreground'}>
+          <span className={hasAccess ? 'text-success font-medium' : 'text-muted-foreground'}>
             {hasAccess ? 'Enabled' : 'Disabled'}
           </span>
         </div>
@@ -155,6 +189,7 @@ const AdminDashboard = () => {
     {
       title: 'Actions',
       key: 'actions',
+      width: 120,
       render: (_, record: any) => (
         <Space>
           <Button 
@@ -188,20 +223,24 @@ const AdminDashboard = () => {
       title: 'Organization Name',
       dataIndex: 'name',
       key: 'name',
+      width: 200,
     },
     {
       title: 'Type',
       dataIndex: 'type',
       key: 'type',
+      width: 150,
     },
     {
       title: 'Total Users',
       dataIndex: 'users',
       key: 'users',
+      width: 120,
     },
     {
       title: 'Actions',
       key: 'actions',
+      width: 150,
       render: (_, record: any) => (
         <Button 
           type="primary" 
@@ -218,9 +257,9 @@ const AdminDashboard = () => {
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div className="bg-gradient-to-r from-accent/10 to-primary/10 p-6 rounded-lg">
+      <div className="bg-gradient-to-r from-accent/10 to-primary/10 p-6 rounded-lg border border-accent/20">
         <Title level={2} className="text-foreground mb-2">Admin Dashboard</Title>
-        <Text type="secondary">Manage users and organization assignments</Text>
+        <Text type="secondary">Manage users, organizations, and file upload permissions</Text>
       </div>
 
       {/* Key Metrics */}
@@ -230,7 +269,7 @@ const AdminDashboard = () => {
             <Statistic
               title="Total Users"
               value={users.length}
-              valueStyle={{ color: '#1E90FF' }}
+              valueStyle={{ color: 'hsl(var(--primary))' }}
               prefix={<UserOutlined />}
             />
           </Card>
@@ -248,20 +287,21 @@ const AdminDashboard = () => {
         <Col xs={24} sm={6}>
           <Card className="text-center bg-gradient-to-br from-accent/5 to-accent/10 border border-accent/20">
             <Statistic
-              title="Organizations"
-              value={organizations.length}
+              title="Upload Access"
+              value={users.filter(user => user.hasUploadAccess).length}
+              suffix={` / ${users.length}`}
               valueStyle={{ color: 'hsl(var(--accent))' }}
-              prefix={<BankOutlined />}
+              prefix={<UploadOutlined />}
             />
           </Card>
         </Col>
         <Col xs={24} sm={6}>
           <Card className="text-center bg-gradient-to-br from-warning/5 to-warning/10 border border-warning/20">
             <Statistic
-              title="Avg Users/Org"
-              value={Math.round(users.length / organizations.length)}
+              title="Organizations"
+              value={organizations.length}
               valueStyle={{ color: 'hsl(var(--warning))' }}
-              prefix={<TeamOutlined />}
+              prefix={<BankOutlined />}
             />
           </Card>
         </Col>
@@ -272,7 +312,10 @@ const AdminDashboard = () => {
         <Tabs defaultActiveKey="users" size="large">
           <TabPane tab="User Management" key="users">
             <div className="mb-4 flex justify-between items-center">
-              <Title level={4} className="mb-0">User Management</Title>
+              <div>
+                <Title level={4} className="mb-1">User Management</Title>
+                <Text type="secondary">Manage users you've created and their permissions</Text>
+              </div>
               <Space>
                 <ExportButton data={users} filename="users" />
                 <Button 
@@ -289,14 +332,15 @@ const AdminDashboard = () => {
               columns={userColumns}
               dataSource={users}
               pagination={{ pageSize: 10 }}
-              scroll={{ x: 800 }}
+              scroll={{ x: 1000 }}
+              className="border border-border rounded-lg"
             />
           </TabPane>
           
-          <TabPane tab="File Upload Permissions" key="permissions">
+          <TabPane tab="Upload Permissions" key="permissions">
             <div className="mb-4">
               <Title level={4} className="mb-2">File Upload Access Control</Title>
-              <Text type="secondary">Grant or revoke file upload permissions for users</Text>
+              <Text type="secondary">Grant or revoke file upload permissions for users you manage</Text>
             </div>
             
             <Card className="mb-4 bg-gradient-to-r from-primary/5 to-accent/5 border border-primary/10">
@@ -338,13 +382,14 @@ const AdminDashboard = () => {
               dataSource={users}
               pagination={{ pageSize: 10 }}
               scroll={{ x: 1000 }}
+              className="border border-border rounded-lg"
             />
           </TabPane>
 
           <TabPane tab="Organization Assignment" key="organizations">
             <div className="mb-4">
               <Title level={4} className="mb-2">Organization Management</Title>
-              <Text type="secondary">Manage user assignments to organizations</Text>
+              <Text type="secondary">Manage user assignments to organizations you have access to</Text>
             </div>
             
             <div className="mb-4 flex justify-end">
@@ -356,6 +401,7 @@ const AdminDashboard = () => {
               dataSource={organizations}
               pagination={{ pageSize: 10 }}
               scroll={{ x: 600 }}
+              className="border border-border rounded-lg"
             />
           </TabPane>
         </Tabs>
@@ -371,6 +417,7 @@ const AdminDashboard = () => {
           userForm.resetFields();
         }}
         footer={null}
+        width={600}
         className="top-6"
       >
         <div className="p-4">
@@ -414,6 +461,7 @@ const AdminDashboard = () => {
               <Select
                 placeholder="Select organization"
                 size="large"
+                showSearch
               >
                 {organizations.map(org => (
                   <Option key={org.id} value={org.name}>{org.name}</Option>
@@ -471,6 +519,7 @@ const AdminDashboard = () => {
           assignForm.resetFields();
         }}
         footer={null}
+        width={500}
       >
         <div className="p-4">
           <Form
@@ -487,6 +536,7 @@ const AdminDashboard = () => {
               <Select
                 placeholder="Select user to assign"
                 size="large"
+                showSearch
               >
                 {users.map(user => (
                   <Option key={user.id} value={user.id}>
@@ -504,6 +554,7 @@ const AdminDashboard = () => {
               <Select
                 placeholder="Select organization"
                 size="large"
+                showSearch
               >
                 {organizations.map(org => (
                   <Option key={org.id} value={org.name}>{org.name}</Option>
@@ -524,8 +575,8 @@ const AdminDashboard = () => {
                 <Button 
                   type="primary" 
                   htmlType="submit"
-                  icon={<TeamOutlined />}
-                  className="bg-accent hover:bg-accent-dark text-white"
+                  icon={<BankOutlined />}
+                  className="bg-accent hover:bg-accent-dark"
                 >
                   Assign User
                 </Button>

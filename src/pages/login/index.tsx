@@ -53,7 +53,12 @@ const Login = () => {
       message.success(`Welcome ${user.name}!`);
       setTimeout(() => {
         setLoading(false);
-        navigate('/organization-selection');
+        // Skip org selection for SuperAdmin, go directly to super-admin dashboard
+        if (user.role === 'SuperAdmin') {
+          navigate('/super-admin');
+        } else {
+          navigate('/organization-selection');
+        }
       }, 1000);
     } else {
       setLoading(false);
@@ -141,12 +146,6 @@ const Login = () => {
           <div>
             <Link to="/forgot-password" className="text-primary hover:text-primary-dark">
               Forgot your password?
-            </Link>
-          </div>
-          <div>
-            <Text type="secondary">Don't have an account? </Text>
-            <Link to="/register" className="text-primary hover:text-primary-dark font-medium">
-              Sign up here
             </Link>
           </div>
           </div>
