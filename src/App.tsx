@@ -5,25 +5,24 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ConfigProvider } from 'antd';
 import { RoleProvider } from "./contexts/RoleContext";
-import Login from "./pages/login";
-import Register from "./pages/register";
-import ForgotPassword from "./pages/forgot-password";
-import OrganizationSelection from "./pages/org-select";
-import DashboardLayout from "./components/dashboard-layout";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import ForgotPassword from "./pages/auth/ForgotPassword";
+import OrganizationSelection from "./pages/OrganizationSelection";
+import DashboardLayout from "./components/DashboardLayout";
 import Dashboard from "./pages/dashboard/Dashboard";
-import ProviderSummary from "./pages/provider-summary";
-import ReimbursementSummary from "./pages/reimbursement-summary";
-import RevenueLeakageSummary from "./pages/revenue-leakage-summary";
-import Payers from "./pages/payers";
-import Records from "./pages/records";
-import UploadFiles from "./pages/upload-files";
-import TransactionHistory from "./pages/transaction-history";
-import Profile from "./pages/profile";
-import NotFound from "./pages/not-found";
-import SuperAdminDashboard from "./pages/role-management/super-admin-dashboard";
-import AdminDashboard from "./pages/role-management/admin-dashboard";
-import { Provider } from 'react-redux';
-import store from "./redux/store";
+import ProviderSummary from "./pages/dashboard/ProviderSummary";
+import ReimbursementSummary from "./pages/dashboard/ReimbursementSummary";
+import RevenueLeakageSummary from "./pages/dashboard/RevenueLeakageSummary";
+import Payers from "./pages/dashboard/Payers";
+import Records from "./pages/dashboard/Records";
+import UploadFiles from "./pages/dashboard/UploadFiles";
+import TransactionHistory from "./pages/dashboard/TransactionHistory";
+import Profile from "./pages/dashboard/Profile";
+import NotFound from "./pages/NotFound";
+import SuperAdminDashboard from "./pages/role-management/SuperAdminDashboard";
+import AdminDashboard from "./pages/role-management/AdminDashboard";
+
 const queryClient = new QueryClient();
 
 // Ant Design theme configuration
@@ -40,7 +39,6 @@ const antdTheme = {
 };
 
 const App = () => (
-  <Provider store={store}>
   <QueryClientProvider client={queryClient}>
     <RoleProvider>
       <ConfigProvider theme={antdTheme}>
@@ -80,7 +78,6 @@ const App = () => (
       </ConfigProvider>
     </RoleProvider>
   </QueryClientProvider>
-  </Provider>
 );
 
 export default App;
