@@ -44,7 +44,4 @@ export const tableSettings = {
     )
 }
 
-
-
-
 export const tableTextFormatter = (text: any) => text || "-"

@@ -5,9 +5,14 @@ const AUTH = defineAPIConfig({
      * Auth endpoints
      */
     LOGIN: {
-        url: "auth/api/Admin/login/",
+        url: "api/Auth/login/",
         method: "POST"
     },
+    REGISTER: {
+        url: "api/Auth/register/",
+        method: "POST"
+    },
+    
     FORGOT_PASSWORD: {
         url: "auth/api/Auth/forgot-password/",
         method: "POST"
