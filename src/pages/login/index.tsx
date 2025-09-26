@@ -3,16 +3,19 @@ import { UserOutlined, LockOutlined, EyeInvisibleOutlined, EyeTwoTone } from '@a
 import { Link, useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useRole } from '@/contexts/RoleContext';
+import { AuthServices } from '@/services';
+import { AppDisptach } from '@/redux/store';
+import { useDispatch } from 'react-redux';
 
 const { Title, Text } = Typography;
 
 const Login = () => {
   const navigate = useNavigate();
   const { setCurrentUser } = useRole();
+  const dispatch = useDispatch<AppDisptach>();
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-  // Mock users for testing
   const mockUsers = [
     {
       id: 'super-1',
@@ -36,29 +39,35 @@ const Login = () => {
       email: 'user@test.com', 
       role: 'User' as const,
       organization: 'Health Corp',
-      hasUploadAccess: true,
+      hasUploadAccess: false,
     },
   ];
 
-  const onFinish = (values: { email: string; password: string }) => {
+  const onFinish = async (values: { email: string; password: string }) => {
     setLoading(true);
-    
-    // Find user by email
     const user = mockUsers.find(u => u.email === values.email);
-    
+    // const res = await AuthServices.Login({bodyData:values})
     if (user && values.password === 'password123') {
+
       setCurrentUser(user);
       message.success(`Welcome ${user.name}!`);
       setTimeout(() => {
         setLoading(false);
-        navigate('/');
+        navigate('/organization-selection');
       }, 1000);
     } else {
       setLoading(false);
       message.error('Invalid email or password');
     }
+    // const res = await AuthServices.Login({bodyData:values})
+    // if(res?.status==200){
+    // dispatch(login(res?.data))
+    //   message.success(res?.message)
+    // }
+    // if(res?.status==400){
+    //  message.error(res?.message)
+    // }
   };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-light to-accent-light flex items-center justify-center p-4">
       <div className="w-full max-w-lg shadow-lg">
@@ -83,7 +92,6 @@ const Login = () => {
             type="info"
             className="mb-6"
           />
-
         <Form
           form={form}
           name="login"
@@ -116,7 +124,6 @@ const Login = () => {
               iconRender={(visible) => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
             />
           </Form.Item>
-
           <Form.Item>
             <Button 
               type="primary" 
@@ -129,9 +136,7 @@ const Login = () => {
             </Button>
           </Form.Item>
         </Form>
-
         <Divider />
-
         <div className="text-center space-y-3">
           <div>
             <Link to="/forgot-password" className="text-primary hover:text-primary-dark">

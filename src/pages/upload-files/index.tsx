@@ -10,7 +10,7 @@ import {
   WarningOutlined
 } from '@ant-design/icons';
 import { useState } from 'react';
-import FileUploadModal from '@/components/FileUploadModal';
+import FileUploadModal from '@/components/file-upload';
 import { useRole } from '@/contexts/RoleContext';
 
 const { Dragger } = Upload;
