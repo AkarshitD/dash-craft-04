@@ -11,20 +11,19 @@ const AUTH = defineAPIConfig({
     REGISTER: {
         url: "api/Auth/register/",
         method: "POST"
-    },
-    
+    }, 
     FORGOT_PASSWORD: {
-        url: "auth/api/Auth/forgot-password/",
+        url: "api/Auth/forgot-password/",
         method: "POST"
     },
     VERIFY_OTP: {
-        url: "auth/api/Auth/verify-otp/",
+        url: "/api/Auth/verify-otp/",
         method: "POST"
     },
-    CHANGE_PASSWORD: (userId: number) =>  ({
-        url: `auth/api/Auth/change-password/${userId}`,
+    CHANGE_PASSWORD:{
+        url: `api/Auth/change-password/`,
         method: "POST"
-    }),
+    },
     RESET_PASSWORD: (userId: number) =>  ({
         url: `auth/api/Auth/reset-password/${userId}`,
         method: "POST"

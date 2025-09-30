@@ -81,18 +81,21 @@ const AuthServices = {
         }
     },
 
-    ChangePassword: async ({ bodyData, userId }: { bodyData: BodyData, userId?: any }) => {
-        try {
-            const payload = {
-                ...AUTH.CHANGE_PASSWORD(userId),
-                bodyData,
-            };
-            const res = await APIrequest(payload);
-            return res;
-        } catch (error) {
-            throw error;
-        }
-    },
+
+ChangePassword: async ({ bodyData }: { bodyData: BodyData }) => {
+  try {
+    const payload = {
+      ...AUTH.CHANGE_PASSWORD,
+      bodyData,
+    };
+
+    const res = await APIrequest(payload);
+    return res;
+  } catch (error) {
+    throw error;
+  }
+},
+
 
     ResetPassword: async ({ bodyData, userId  }: { bodyData: BodyData,  userId?: number }) => {
         try {

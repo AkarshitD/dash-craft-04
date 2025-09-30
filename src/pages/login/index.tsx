@@ -21,9 +21,10 @@ const Login = () => {
     const onFinish = async (values: { email: string; password: string }) => {
     setLoading(true);
     const res = await AuthServices.Login({bodyData:values})
+    console.log(res)
     if(res?.status==200){
-    setLocalStorage('accessToken',res?.data?.accessToken)
-    setLocalStorage('refreshToken',res?.data?.refreshToken)
+    setLocalStorage('accessToken',res?.data?.tokens?.accessToken)
+    setLocalStorage('refreshToken',res?.data?.tokens?.refreshToken)
     dispatch(login(res?.data?.user))
     navigate('/')
       message.success(res?.message)

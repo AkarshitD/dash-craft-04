@@ -2,7 +2,7 @@ import { Method } from 'axios';
 import config from '@/config';
 
 export const getLocalStorageToken = () => {
-    const token = localStorage.getItem(`${config.APP_NAME}:access`);
+    const token = localStorage.getItem(`${config.APP_NAME}:accessToken`);
 
     return token ? token : false;
 }
