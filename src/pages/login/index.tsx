@@ -143,12 +143,6 @@ const Login = () => {
               Forgot your password?
             </Link>
           </div>
-          <div>
-            <Text type="secondary">Don't have an account? </Text>
-            <Link to="/register" className="text-primary hover:text-primary-dark font-medium">
-              Sign up here
-            </Link>
-          </div>
           </div>
         </Card>
       </div>

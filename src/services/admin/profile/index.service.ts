@@ -13,13 +13,13 @@ const ProfileServices = {
     GetProfile: async () => {
         try {
             const payload = {
-                ...PROFILE.GET_PROFILE(),
+                url: PROFILE.GET,
+                method: 'GET' as const,
             };
             const res = await APIrequest(payload);
             return res;
         } catch (error) {
             console.log(error);
-
             throw error;
         }
     },
@@ -27,58 +27,14 @@ const ProfileServices = {
     UpdateProfile: async ({bodyData}:{bodyData:BodyData}) => {
         try {
             const payload = {
-                ...PROFILE.UPDATE_PROFILE,
+                url: PROFILE.UPDATE,
+                method: 'PUT' as const,
                 bodyData
             };
             const res = await APIrequest(payload);
             return res;
         } catch (error) {
             console.log(error);
-
-            throw error;
-        }
-    },
-
-    UploadProfilePic: async ({ bodyData}:{bodyData:FormData}) => {
-        try {
-            const payload = {
-                ...PROFILE.UPLOAD_PROFILE_PIC(),
-                bodyData
-            };
-            const res = await APIrequest(payload);
-            return res;
-        } catch (error) {
-            console.log(error);
-
-            throw error;
-        }
-    },
-
-    RemoveProfilePic: async ({bodyData}: {bodyData: BodyData}) => {
-        try {
-            const payload = {
-                ...PROFILE.REMOVE_PROFILE_PIC(),
-                bodyData
-            };
-            const res = await APIrequest(payload);
-            return res;
-        } catch (error) {
-            console.log(error);
-
-            throw error;
-        }
-    },
-
-    GetMainDashboardData: async () => {
-        try {
-            const payload = {
-                ...PROFILE.MAIN_DASHBOARD_DATA,
-            };
-            const res = await APIrequest(payload);
-            return res;
-        } catch (error) {
-            console.log(error);
-
             throw error;
         }
     },

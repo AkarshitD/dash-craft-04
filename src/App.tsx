@@ -6,9 +6,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ConfigProvider } from 'antd';
 import { RoleProvider } from "./contexts/RoleContext";
 import Login from "./pages/login";
-import Register from "./pages/register";
 import ForgotPassword from "./pages/forgot-password";
-import OrganizationSelection from "./pages/org-select";
 import DashboardLayout from "./components/dashboard-layout";
 import Dashboard from "./pages/dashboard/Dashboard";
 import ProviderSummary from "./pages/provider-summary";
@@ -20,8 +18,11 @@ import UploadFiles from "./pages/upload-files";
 import TransactionHistory from "./pages/transaction-history";
 import Profile from "./pages/profile";
 import NotFound from "./pages/not-found";
-import SuperAdminDashboard from "./pages/role-management/super-admin-dashboard";
-import AdminDashboard from "./pages/role-management/admin-dashboard";
+import SuperAdminManagement from "./pages/role-management/super-admin-dashboard";
+import AdminManagement from "./pages/role-management/admin-dashboard";
+import UserManagement from "./pages/user-management";
+import SuperAdminLanding from "./pages/super-admin-landing";
+import AdminLanding from "./pages/admin-landing";
 import { Provider } from 'react-redux';
 import store from "./redux/store";
 const queryClient = new QueryClient();
@@ -49,13 +50,9 @@ const App = () => (
           <Sonner />
           <BrowserRouter>
           <Routes>
-            {/* Authentication routes */}
             <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/organization-selection" element={<OrganizationSelection />} />
             
-            {/* Dashboard routes */}
             <Route path="/" element={<DashboardLayout />}>
               <Route index element={<Dashboard />} />
               <Route path="provider-summary" element={<ProviderSummary />} />
@@ -66,13 +63,13 @@ const App = () => (
               <Route path="upload-files" element={<UploadFiles />} />
               <Route path="transaction-history" element={<TransactionHistory />} />
               <Route path="profile" element={<Profile />} />
-              
-              {/* Role Management routes */}
-              <Route path="super-admin" element={<SuperAdminDashboard />} />
-              <Route path="admin-management" element={<AdminDashboard />} />
+              <Route path="super-admin-management" element={<SuperAdminManagement />} />
+              <Route path="admin-management" element={<AdminManagement />} />
+              <Route path="user-management" element={<UserManagement />} />
+              <Route path="super-admin-landing" element={<SuperAdminLanding />} />
+              <Route path="admin-landing" element={<AdminLanding />} />
             </Route>
             
-            {/* Catch-all route */}
             <Route path="*" element={<NotFound />} />
           </Routes>
           </BrowserRouter>

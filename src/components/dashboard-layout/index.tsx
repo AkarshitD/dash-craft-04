@@ -26,8 +26,14 @@ const DashboardLayout = () => {
   const [collapsed, setCollapsed] = useState(false);
   const { hasUploadPermission, canSeeAdminPanel, canSeeSuperAdminPanel, currentUser } = useRole();
 
-  // Build menu items based on role
+  const isLandingPage = location.pathname === '/';
+
   const getMenuItems = () => {
+    // Hide menu items on landing page for SuperAdmin and Admin
+    if (isLandingPage && (canSeeSuperAdminPanel() || canSeeAdminPanel())) {
+      return [];
+    }
+
     const baseItems = [
       {
         key: '/',
@@ -66,7 +72,6 @@ const DashboardLayout = () => {
       },
     ];
 
-    // Add upload files if user has permission
     if (hasUploadPermission()) {
       baseItems.splice(6, 0, {
         key: '/upload-files',
@@ -75,32 +80,28 @@ const DashboardLayout = () => {
       });
     }
 
-    // Add role management based on permissions
-    if (canSeeSuperAdminPanel() || canSeeAdminPanel()) {
-      const roleManagementItem: any = {
-        key: 'role-management',
-        label: 'Role Management',
+    if (canSeeSuperAdminPanel()) {
+      baseItems.push({
+        key: '/super-admin-management',
+        label: 'Super Admin Management',
         icon: <SettingOutlined />,
-        children: [],
-      };
-
-      if (canSeeSuperAdminPanel()) {
-        roleManagementItem.children.push({
-          key: '/super-admin',
-          icon: <UserOutlined />,
-          label: 'SuperAdmin Panel',
-        });
-      }
-      
-      if (canSeeAdminPanel()) {
-        roleManagementItem.children.push({
-          key: '/admin-management',
-          icon: <TeamOutlined />,
-          label: 'Admin Panel',
-        });
-      }
-
-      baseItems.push(roleManagementItem);
+      } as any);
+      baseItems.push({
+        key: '/user-management',
+        label: 'User Management',
+        icon: <TeamOutlined />,
+      } as any);
+    } else if (canSeeAdminPanel()) {
+      baseItems.push({
+        key: '/admin-management',
+        label: 'Admin Management',
+        icon: <SettingOutlined />,
+      } as any);
+      baseItems.push({
+        key: '/user-management',
+        label: 'User Management',
+        icon: <TeamOutlined />,
+      } as any);
     }
 
     return baseItems;

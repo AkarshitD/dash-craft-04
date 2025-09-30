@@ -1,31 +1,30 @@
-import { Row, Col, Card, Statistic, Progress, Table } from 'antd';
-import { 
-  ArrowUpOutlined, 
-  ArrowDownOutlined, 
-  DollarOutlined, 
-  UserOutlined, 
-  FileTextOutlined, 
-  TeamOutlined 
-} from '@ant-design/icons';
-import { Line, Column, Pie } from '@ant-design/charts';
+import { Card, Row, Col, Statistic, Select } from 'antd';
+import { DollarOutlined, UserOutlined, FileTextOutlined, RiseOutlined, ArrowUpOutlined, ArrowDownOutlined } from '@ant-design/icons';
+import { Line, Column } from '@ant-design/charts';
+import { useRole } from '@/contexts/RoleContext';
+import { useState, useEffect } from 'react';
+import SuperAdminLanding from '../super-admin-landing';
+import AdminLanding from '../admin-landing';
+
+const { Option } = Select;
 
 const Dashboard = () => {
-  // Mock data for charts
-  const revenueData = [
-    { month: 'Jan', revenue: 45000 },
-    { month: 'Feb', revenue: 52000 },
-    { month: 'Mar', revenue: 48000 },
-    { month: 'Apr', revenue: 58000 },
-    { month: 'May', revenue: 62000 },
-    { month: 'Jun', revenue: 67000 },
-  ];
+  const { currentUser } = useRole();
+  const [selectedOrg, setSelectedOrg] = useState<string>('');
 
-  const payerData = [
-    { payer: 'Medicare', amount: 45, color: '#1E90FF' },
-    { payer: 'Medicaid', amount: 25, color: '#00CED1' },
-    { payer: 'Blue Cross', amount: 20, color: '#32CD32' },
-    { pager: 'Aetna', amount: 10, color: '#FF6347' },
-  ];
+  useEffect(() => {
+    if (currentUser.role === 'User' && !selectedOrg) {
+      setSelectedOrg('Health Corp');
+    }
+  }, [currentUser, selectedOrg]);
+
+  if (currentUser.role === 'SuperAdmin') {
+    return <SuperAdminLanding />;
+  }
+
+  if (currentUser.role === 'Admin') {
+    return <AdminLanding />;
+  }
 
   const providerData = [
     { provider: 'Dr. Smith', patients: 45 },
@@ -35,78 +34,31 @@ const Dashboard = () => {
     { provider: 'Dr. Davis', patients: 40 },
   ];
 
-  const recentTransactions = [
-    {
-      key: '1',
-      id: 'TXN-001',
-      patient: 'John Doe',
-      amount: 1250,
-      date: '2024-01-15',
-      status: 'Completed',
-      payer: 'Medicare',
-    },
-    {
-      key: '2',
-      id: 'TXN-002',
-      patient: 'Jane Smith',
-      amount: 890,
-      date: '2024-01-14',
-      status: 'Pending',
-      payer: 'Blue Cross',
-    },
-    {
-      key: '3',
-      id: 'TXN-003',
-      patient: 'Mike Johnson',
-      amount: 2100,
-      date: '2024-01-13',
-      status: 'Completed',
-      payer: 'Aetna',
-    },
-  ];
-
-  const transactionColumns = [
-    {
-      title: 'Transaction ID',
-      dataIndex: 'id',
-      key: 'id',
-    },
-    {
-      title: 'Patient',
-      dataIndex: 'patient',
-      key: 'patient',
-    },
-    {
-      title: 'Amount',
-      dataIndex: 'amount',
-      key: 'amount',
-      render: (amount: number) => `$${amount.toLocaleString()}`,
-    },
-    {
-      title: 'Date',
-      dataIndex: 'date',
-      key: 'date',
-    },
-    {
-      title: 'Payer',
-      dataIndex: 'payer',
-      key: 'payer',
-    },
-    {
-      title: 'Status',
-      dataIndex: 'status',
-      key: 'status',
-      render: (status: string) => (
-        <span className={status === 'Completed' ? 'text-success' : 'text-warning'}>
-          {status}
-        </span>
-      ),
-    },
-  ];
-
   return (
     <div className="space-y-6">
-      {/* Key Metrics */}
+      <div className="bg-gradient-to-r from-primary/10 to-accent/10 p-6 rounded-lg">
+        <div className="flex justify-between items-center">
+          <div>
+            <h2 className="text-2xl font-bold text-foreground mb-2">
+              {selectedOrg || 'Dashboard Overview'}
+            </h2>
+            <p className="text-muted-foreground">Welcome back! Here's what's happening with your healthcare analytics.</p>
+          </div>
+          {currentUser.role === 'User' && (
+            <Select
+              value={selectedOrg}
+              onChange={setSelectedOrg}
+              style={{ width: 200 }}
+              size="large"
+            >
+              <Option value="Health Corp">Health Corp</Option>
+              <Option value="MedCenter">MedCenter</Option>
+              <Option value="Regional Hospital">Regional Hospital</Option>
+            </Select>
+          )}
+        </div>
+      </div>
+
       <Row gutter={[16, 16]}>
         <Col xs={24} sm={12} lg={6}>
           <Card className="text-center bg-gradient-to-br from-primary/5 to-primary/10 border border-primary/20">
@@ -157,121 +109,44 @@ const Dashboard = () => {
         <Col xs={24} sm={12} lg={6}>
           <Card className="text-center bg-gradient-to-br from-warning/5 to-warning/10 border border-warning/20">
             <Statistic
-              title="Active Providers"
-              value={42}
+              title="Revenue Growth"
+              value={15.2}
+              precision={1}
+              suffix="%"
               valueStyle={{ color: '#FF6347' }}
-              prefix={<TeamOutlined />}
-              suffix={
-                <span className="text-success text-sm ml-2">
-                  <ArrowUpOutlined /> 5.2%
-                </span>
-              }
+              prefix={<RiseOutlined />}
             />
           </Card>
         </Col>
       </Row>
 
-      {/* Charts Row */}
-      {/* <Row gutter={[16, 16]}>
-        <Col xs={24} lg={16}>
-          <Card title="Revenue Trend" className="h-96">
-            <Line
-              data={revenueData}
-              xField="month"
-              yField="revenue"
-              color="#1E90FF"
-              smooth
-              point={{ size: 5, shape: 'diamond' }}
-            />
-          </Card>
-        </Col>
-        <Col xs={24} lg={8}>
-          <Card title="Payer Distribution" className="h-96">
-            <Pie
-              data={payerData}
-              angleField="amount"
-              colorField="payer"
-              radius={0.8}
-              label={{
-                type: 'outer',
-                content: '{name} {percentage}',
-              }}
-            />
-          </Card>
-        </Col>
-      </Row> */}
-
-      {/* Performance Metrics */}
       <Row gutter={[16, 16]}>
         <Col xs={24} lg={12}>
-          <Card title="Provider Performance" className="h-auto">
+          <Card title="Provider Performance">
             <Column
               data={providerData}
               xField="provider"
               yField="patients"
-              color="#32CD32"
+              color="hsl(var(--primary))"
               columnWidthRatio={0.6}
             />
           </Card>
         </Col>
         <Col xs={24} lg={12}>
-          <Card title="Key Performance Indicators" className="h-auto">
-            <div className="space-y-6">
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>Claims Approval Rate</span>
-                  <span className="font-semibold text-success">94.2%</span>
-                </div>
-                <Progress percent={94.2} strokeColor="#32CD32" />
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>Revenue Collection</span>
-                  <span className="font-semibold text-primary">87.8%</span>
-                </div>
-                <Progress percent={87.8} strokeColor="#1E90FF" />
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>Revenue Collection</span>
-                  <span className="font-semibold text-primary">87.8%</span>
-                </div>
-                <Progress percent={87.8} strokeColor="#1E90FF" />
-              </div><div>
-                <div className="flex justify-between mb-2">
-                  <span>Revenue Collection</span>
-                  <span className="font-semibold text-primary">87.8%</span>
-                </div>
-                <Progress percent={87.8} strokeColor="#1E90FF" />
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>Patient Satisfaction</span>
-                  <span className="font-semibold text-accent">91.5%</span>
-                </div>
-                <Progress percent={91.5} strokeColor="#00CED1" />
-              </div>
-              <div>
-                <div className="flex justify-between mb-2">
-                  <span>Processing Efficiency</span>
-                  <span className="font-semibold text-warning">76.3%</span>
-                </div>
-                <Progress percent={76.3} strokeColor="#F59E0B" />
-              </div>
-            </div>
-          </Card>
-        </Col>
-      </Row>
-
-      {/* Recent Transactions */}
-      <Row>
-        <Col span={24}>
-          <Card title="Recent Transactions">
-            <Table
-              columns={transactionColumns}
-              dataSource={recentTransactions}
-              pagination={{ pageSize: 5 }}
-              scroll={{ x: 800 }}
+          <Card title="Revenue Trend">
+            <Line
+              data={[
+                { month: 'Jan', revenue: 45000 },
+                { month: 'Feb', revenue: 52000 },
+                { month: 'Mar', revenue: 48000 },
+                { month: 'Apr', revenue: 58000 },
+                { month: 'May', revenue: 62000 },
+                { month: 'Jun', revenue: 67000 },
+              ]}
+              xField="month"
+              yField="revenue"
+              color="hsl(var(--success))"
+              smooth
             />
           </Card>
         </Col>

@@ -12,14 +12,14 @@ const UserServices = {
     GetUsers: async ({queryParams} : {queryParams: QueryParams}) => {
         try {
             const payload = {
-                ...USER.GET_ALL_USER,
+                url: USER.LIST,
+                method: 'GET' as const,
                 queryParams
             };
             const res = await APIrequest(payload);
             return res;
         } catch (error) {
             console.log(error);
-
             throw error;
         }
     },
@@ -27,14 +27,14 @@ const UserServices = {
     UpdateUsers: async ({bodyData, userId}:{userId?: any, bodyData: BodyData}) => {
         try {
             const payload = {
-                ...USER.UPDATE_USER(userId),
+                url: USER.UPDATE.replace(':id', userId),
+                method: 'PUT' as const,
                 bodyData
             };
             const res = await APIrequest(payload);
             return res;
         } catch (error) {
             console.log(error);
-
             throw error;
         }
     },
@@ -42,28 +42,13 @@ const UserServices = {
     DeleteUserById: async ({userId}:{userId?: any}) => {
         try {
             const payload = {
-                ...USER.DELETE_USER(userId),
+                url: USER.DELETE.replace(':id', userId),
+                method: 'DELETE' as const,
             };
             const res = await APIrequest(payload);
             return res;
         } catch (error) {
             console.log(error);
-
-            throw error;
-        }
-    },
-
-    SuspendUserById: async ({userId, bodyData}:{userId?: any, bodyData: BodyData}) => {
-        try {
-            const payload = {
-                ...USER.USER_SUSPEND(userId),
-                bodyData
-            };
-            const res = await APIrequest(payload);
-            return res;
-        } catch (error) {
-            console.log(error);
-
             throw error;
         }
     },
