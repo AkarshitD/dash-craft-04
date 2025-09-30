@@ -5,25 +5,21 @@ const AUTH = defineAPIConfig({
      * Auth endpoints
      */
     LOGIN: {
-        url: "api/Auth/login/",
+        url: "auth/api/Admin/login/",
         method: "POST"
     },
-    REGISTER: {
-        url: "api/Auth/register/",
-        method: "POST"
-    }, 
     FORGOT_PASSWORD: {
-        url: "api/Auth/forgot-password/",
+        url: "auth/api/Auth/forgot-password/",
         method: "POST"
     },
     VERIFY_OTP: {
-        url: "/api/Auth/verify-otp/",
+        url: "auth/api/Auth/verify-otp/",
         method: "POST"
     },
-    CHANGE_PASSWORD:{
-        url: `api/Auth/change-password/`,
+    CHANGE_PASSWORD: (userId: number) =>  ({
+        url: `auth/api/Auth/change-password/${userId}`,
         method: "POST"
-    },
+    }),
     RESET_PASSWORD: (userId: number) =>  ({
         url: `auth/api/Auth/reset-password/${userId}`,
         method: "POST"

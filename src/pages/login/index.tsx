@@ -6,8 +6,6 @@ import { useRole } from '@/contexts/RoleContext';
 import { AuthServices } from '@/services';
 import { AppDisptach } from '@/redux/store';
 import { useDispatch } from 'react-redux';
-import { login } from '@/redux/slice';
-import { setLocalStorage } from '@/utils/common';
 
 const { Title, Text } = Typography;
 
@@ -18,20 +16,57 @@ const Login = () => {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
 
-    const onFinish = async (values: { email: string; password: string }) => {
+  const mockUsers = [
+    {
+      id: 'super-1',
+      name: 'Super Administrator',
+      email: 'superadmin@test.com',
+      role: 'SuperAdmin' as const,
+      organization: 'System Administration',
+      hasUploadAccess: true,
+    },
+    {
+      id: 'admin-1', 
+      name: 'Healthcare Admin',
+      email: 'admin@test.com',
+      role: 'Admin' as const,
+      organization: 'Health Corp',
+      hasUploadAccess: true,
+    },
+    {
+      id: 'user-1',
+      name: 'Dr. Sarah Johnson',
+      email: 'user@test.com', 
+      role: 'User' as const,
+      organization: 'Health Corp',
+      hasUploadAccess: false,
+    },
+  ];
+
+  const onFinish = async (values: { email: string; password: string }) => {
     setLoading(true);
-    const res = await AuthServices.Login({bodyData:values})
-    console.log(res)
-    if(res?.status==200){
-    setLocalStorage('accessToken',res?.data?.tokens?.accessToken)
-    setLocalStorage('refreshToken',res?.data?.tokens?.refreshToken)
-    dispatch(login(res?.data?.user))
-    navigate('/')
-      message.success(res?.message)
+    const user = mockUsers.find(u => u.email === values.email);
+    // const res = await AuthServices.Login({bodyData:values})
+    if (user && values.password === 'password123') {
+
+      setCurrentUser(user);
+      message.success(`Welcome ${user.name}!`);
+      setTimeout(() => {
+        setLoading(false);
+        navigate('/organization-selection');
+      }, 1000);
+    } else {
+      setLoading(false);
+      message.error('Invalid email or password');
     }
-    if(res?.status==400){
-     message.error(res?.message)
-    }
+    // const res = await AuthServices.Login({bodyData:values})
+    // if(res?.status==200){
+    // dispatch(login(res?.data))
+    //   message.success(res?.message)
+    // }
+    // if(res?.status==400){
+    //  message.error(res?.message)
+    // }
   };
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-light to-accent-light flex items-center justify-center p-4">
@@ -44,7 +79,8 @@ const Login = () => {
             <Title level={2} className="text-foreground mb-2">Welcome Back</Title>
             <Text type="secondary">Sign in to your healthcare analytics dashboard</Text>
           </div>
-          {/* <Alert
+
+          <Alert
             message="Demo Credentials"
             description={
               <div className="text-sm">
@@ -55,7 +91,7 @@ const Login = () => {
             }
             type="info"
             className="mb-6"
-          /> */}
+          />
         <Form
           form={form}
           name="login"

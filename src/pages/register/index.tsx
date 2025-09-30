@@ -1,11 +1,6 @@
-import { Card, Form, Input, Button, Typography, Divider, Select, message } from 'antd';
-import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined } from '@ant-design/icons';
+import { Card, Form, Input, Button, Typography, Divider, Select } from 'antd';
+import { UserOutlined, LockOutlined, MailOutlined, PhoneOutlined, BankOutlined } from '@ant-design/icons';
 import { Link, useNavigate } from 'react-router-dom';
-import { AuthServices } from '@/services';
-import { ORGANIZATION } from '@/api-endpoints';
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import organization from '@/services/superadmin/organization';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
@@ -13,44 +8,11 @@ const { Option } = Select;
 const Register = () => {
   const navigate = useNavigate();
   const [form] = Form.useForm();
-  const [loading, setLoading] = useState(false);
-  const [organizations, setOrganizations] = useState<any[]>([]);
-  useEffect(() => {
-    const fetchOrganizations = async () => {
-      try {
-        const res = await organization.ORGANIZATION();
-        if (res?.status === 200) {
-          setOrganizations(res.data.data || []);
-        } else {
-          message.error("Failed to load organizations!");
-        }
-      } catch (error: any) {
-        message.error(error?.response?.data?.message || "Error fetching organizations");
-      }
-    };
-    fetchOrganizations();
-  }, []);
 
-  const onFinish = async (values: any) => {
-    setLoading(true);
-    try {
-      const res = await AuthServices.Register({
-        bodyData: {
-          ...values,
-          organizationId: values.organization, 
-        },
-      });
-      if (res?.status === 200) {
-        message.success(res?.message || "User registered successfully!");
-        navigate("/organization-selection");
-      } else {
-        message.error(res?.message || "Registration failed!");
-      }
-    } catch (error: any) {
-      message.error(error?.response?.data?.message || "Something went wrong!");
-    } finally {
-      setLoading(false);
-    }
+  const onFinish = (values: any) => {
+    console.log('Registration attempt:', values);
+    // Simulate successful registration
+    navigate('/organization-selection');
   };
 
   return (
@@ -74,7 +36,10 @@ const Register = () => {
               label="First Name"
               rules={[{ required: true, message: 'Please input your first name!' }]}
             >
-              <Input prefix={<UserOutlined />} placeholder="First name" />
+              <Input 
+                prefix={<UserOutlined />} 
+                placeholder="First name"
+              />
             </Form.Item>
 
             <Form.Item
@@ -82,7 +47,10 @@ const Register = () => {
               label="Last Name"
               rules={[{ required: true, message: 'Please input your last name!' }]}
             >
-              <Input prefix={<UserOutlined />} placeholder="Last name" />
+              <Input 
+                prefix={<UserOutlined />} 
+                placeholder="Last name"
+              />
             </Form.Item>
           </div>
 
@@ -94,7 +62,10 @@ const Register = () => {
               { type: 'email', message: 'Please enter a valid email!' }
             ]}
           >
-            <Input prefix={<MailOutlined />} placeholder="Enter your email" />
+            <Input 
+              prefix={<MailOutlined />} 
+              placeholder="Enter your email"
+            />
           </Form.Item>
 
           <Form.Item
@@ -102,21 +73,34 @@ const Register = () => {
             label="Phone Number"
             rules={[{ required: true, message: 'Please input your phone number!' }]}
           >
-            <Input prefix={<PhoneOutlined />} placeholder="Enter your phone number" />
+            <Input 
+              prefix={<PhoneOutlined />} 
+              placeholder="Enter your phone number"
+            />
           </Form.Item>
 
-          {/* 🔹 Organization dropdown from API */}
           <Form.Item
             name="organization"
             label="Organization"
-            rules={[{ required: true, message: 'Please select your organization!' }]}
+            rules={[{ required: true, message: 'Please input your organization!' }]}
           >
-            <Select placeholder="Select your organization" loading={!organizations.length}>
-              {organizations.map((org) => (
-                <Option key={org.id} value={org.id}>
-                  {org.name}
-                </Option>
-              ))}
+            <Input 
+              prefix={<BankOutlined />} 
+              placeholder="Enter your organization name"
+            />
+          </Form.Item>
+
+          <Form.Item
+            name="role"
+            label="Role"
+            rules={[{ required: true, message: 'Please select your role!' }]}
+          >
+            <Select placeholder="Select your role">
+              <Option value="admin">Administrator</Option>
+              <Option value="manager">Manager</Option>
+              <Option value="analyst">Data Analyst</Option>
+              <Option value="provider">Healthcare Provider</Option>
+              <Option value="coordinator">Care Coordinator</Option>
             </Select>
           </Form.Item>
 
@@ -128,7 +112,10 @@ const Register = () => {
               { min: 8, message: 'Password must be at least 8 characters!' }
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Create a password" />
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Create a password"
+            />
           </Form.Item>
 
           <Form.Item
@@ -147,16 +134,18 @@ const Register = () => {
               }),
             ]}
           >
-            <Input.Password prefix={<LockOutlined />} placeholder="Confirm your password" />
+            <Input.Password
+              prefix={<LockOutlined />}
+              placeholder="Confirm your password"
+            />
           </Form.Item>
 
           <Form.Item>
             <Button 
               type="primary" 
               htmlType="submit" 
-              className="w-full bg-primary hover:bg-primary-dark" 
+              className="w-full bg-primary hover:bg-primary-dark"
               size="large"
-              loading={loading}
             >
               Create Account
             </Button>

@@ -2,7 +2,7 @@ import { Method } from 'axios';
 import config from '@/config';
 
 export const getLocalStorageToken = () => {
-    const token = localStorage.getItem(`${config.APP_NAME}:accessToken`);
+    const token = localStorage.getItem(`${config.APP_NAME}:access`);
 
     return token ? token : false;
 }
@@ -43,5 +43,8 @@ export const tableSettings = {
         }
     )
 }
+
+
+
 
 export const tableTextFormatter = (text: any) => text || "-"

@@ -1,36 +1,18 @@
-import { Card, Form, Input, Button, Typography, Result, message } from 'antd';
+import { Card, Form, Input, Button, Typography, Result } from 'antd';
 import { MailOutlined, ArrowLeftOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
-import { AuthServices } from '@/services'; 
 
 const { Title, Text } = Typography;
 
 const ForgotPassword = () => {
   const [form] = Form.useForm();
   const [emailSent, setEmailSent] = useState(false);
-  const [loading, setLoading] = useState(false);
 
-  const onFinish = async (values: any) => {
-    try {
-      setLoading(true);
-      const res = await AuthServices.ForgotPassword({
-        bodyData:values,
-      });
-       if(res?.status==200){
-      message.success(res?.message || "Reset instructions sent!");
-       }
-       if(res?.status==400){
-     message.error(res?.message)
-    }
-      // setEmailSent(true);
-    } catch (error: any) {
-      message.error(
-        error?.response?.data?.message || "Failed to send reset instructions."
-      );
-    } finally {
-      setLoading(false);
-    }
+  const onFinish = (values: any) => {
+    console.log('Password reset request:', values);
+    // Simulate email sent
+    setEmailSent(true);
   };
 
   if (emailSent) {
@@ -42,13 +24,9 @@ const ForgotPassword = () => {
             title="Email Sent!"
             subTitle="We've sent password reset instructions to your email address."
             extra={[
-              <Button
-                type="primary"
-                key="login"
-                className="bg-primary hover:bg-primary-dark"
-              >
+              <Button type="primary" key="login" className="bg-primary hover:bg-primary-dark">
                 <Link to="/login">Back to Login</Link>
-              </Button>,
+              </Button>
             ]}
           />
         </Card>
@@ -74,24 +52,23 @@ const ForgotPassword = () => {
           size="large"
         >
           <Form.Item
-            name="emailAddress"
+            name="email"
             label="Email Address"
             rules={[
               { required: true, message: 'Please input your email!' },
-              { type: 'email', message: 'Please enter a valid email!' },
+              { type: 'email', message: 'Please enter a valid email!' }
             ]}
           >
-            <Input
-              prefix={<MailOutlined />}
+            <Input 
+              prefix={<MailOutlined />} 
               placeholder="Enter your email address"
             />
           </Form.Item>
 
           <Form.Item>
-            <Button
-              type="primary"
-              htmlType="submit"
-              loading={loading}
+            <Button 
+              type="primary" 
+              htmlType="submit" 
               className="w-full bg-primary hover:bg-primary-dark"
               size="large"
             >
@@ -101,8 +78,8 @@ const ForgotPassword = () => {
         </Form>
 
         <div className="text-center mt-6">
-          <Link
-            to="/login"
+          <Link 
+            to="/login" 
             className="inline-flex items-center text-primary hover:text-primary-dark"
           >
             <ArrowLeftOutlined className="mr-2" />

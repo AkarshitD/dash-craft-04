@@ -1,5 +1,4 @@
 import { AUTH } from "@/api-endpoints";
-import Register from "@/pages/register";
 import APIrequest from "@/services/axios";
 import { BodyData } from "@/types";
 import { clearStorage } from "@/utils/common";
@@ -16,20 +15,6 @@ const AuthServices = {
             clearStorage()
             const payload = {
                 ...AUTH.LOGIN,
-                bodyData,
-            };
-            const res = await APIrequest(payload);
-            return res;
-        } catch (error) {
-            throw error;
-        }
-    },
-
-     Register: async ({ bodyData }: { bodyData: BodyData }) => {
-        try {
-            clearStorage()
-            const payload = {
-                ...AUTH.REGISTER,
                 bodyData,
             };
             const res = await APIrequest(payload);
@@ -81,21 +66,18 @@ const AuthServices = {
         }
     },
 
-
-ChangePassword: async ({ bodyData }: { bodyData: BodyData }) => {
-  try {
-    const payload = {
-      ...AUTH.CHANGE_PASSWORD,
-      bodyData,
-    };
-
-    const res = await APIrequest(payload);
-    return res;
-  } catch (error) {
-    throw error;
-  }
-},
-
+    ChangePassword: async ({ bodyData, userId }: { bodyData: BodyData, userId?: any }) => {
+        try {
+            const payload = {
+                ...AUTH.CHANGE_PASSWORD(userId),
+                bodyData,
+            };
+            const res = await APIrequest(payload);
+            return res;
+        } catch (error) {
+            throw error;
+        }
+    },
 
     ResetPassword: async ({ bodyData, userId  }: { bodyData: BodyData,  userId?: number }) => {
         try {

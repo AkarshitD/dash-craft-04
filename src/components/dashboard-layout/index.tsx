@@ -76,22 +76,32 @@ const DashboardLayout = () => {
     }
 
     // Add role management based on permissions
-    if (canSeeSuperAdminPanel()) {
-  baseItems.push({
-    key: '/super-admin',
-    icon: <UserOutlined />,
-    label: 'SuperAdmin',
-  });
-}
+    if (canSeeSuperAdminPanel() || canSeeAdminPanel()) {
+      const roleManagementItem: any = {
+        key: 'role-management',
+        label: 'Role Management',
+        icon: <SettingOutlined />,
+        children: [],
+      };
 
-if (canSeeAdminPanel()) {
-  baseItems.push({
-    key: '/admin-management',
-    icon: <TeamOutlined />,
-    label: 'Admin',
-  });
-}
+      if (canSeeSuperAdminPanel()) {
+        roleManagementItem.children.push({
+          key: '/super-admin',
+          icon: <UserOutlined />,
+          label: 'SuperAdmin Panel',
+        });
+      }
+      
+      if (canSeeAdminPanel()) {
+        roleManagementItem.children.push({
+          key: '/admin-management',
+          icon: <TeamOutlined />,
+          label: 'Admin Panel',
+        });
+      }
 
+      baseItems.push(roleManagementItem);
+    }
 
     return baseItems;
   };
